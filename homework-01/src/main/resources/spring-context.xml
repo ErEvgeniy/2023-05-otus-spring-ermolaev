@@ -4,12 +4,13 @@
 		xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="appConfig" class="ru.otus.config.AppConfig">
-		<constructor-arg index="0" value="classpath:questions.csv"/>
-		<constructor-arg index="1" value=";"/>
-	</bean>
+	<bean id="resourceLoader" class="org.springframework.core.io.DefaultResourceLoader"/>
 
-	<bean id="questionDaoImpl" class="ru.otus.dao.impl.QuestionDaoImpl"/>
+	<bean id="questionDaoImpl" class="ru.otus.dao.impl.CsvQuestionDaoImpl">
+		<constructor-arg index="0" ref="resourceLoader"/>
+		<constructor-arg index="1" value="classpath:questions.csv"/>
+		<constructor-arg index="2" value=";"/>
+	</bean>
 
 	<bean id="questionServiceImpl" class="ru.otus.service.impl.QuestionServiceImpl">
 		<constructor-arg index="0" ref="questionDaoImpl"/>
@@ -20,23 +21,12 @@
 		<constructor-arg index="1" value="#{ T(java.lang.System).in  }"/>
 	</bean>
 
-	<bean id="resourceLoader" class="org.springframework.core.io.DefaultResourceLoader"/>
-
-	<bean id="resourceServiceImpl" class="ru.otus.service.impl.ResourceServiceImpl">
-		<constructor-arg index="0" ref="resourceLoader"/>
-	</bean>
-
 	<bean id="questionConverter" class="ru.otus.converter.QuestionConverter"/>
-
-	<bean id="csvServiceImpl" class="ru.otus.service.impl.CsvServiceImpl"/>
 
 	<bean id="examinationServiceImpl" class="ru.otus.service.impl.ExaminationServiceImpl">
 		<constructor-arg index="0" ref="questionServiceImpl"/>
 		<constructor-arg index="1" ref="ioServiceStreams"/>
-		<constructor-arg index="2" ref="resourceServiceImpl"/>
-		<constructor-arg index="3" ref="appConfig"/>
-		<constructor-arg index="4" ref="questionConverter"/>
-		<constructor-arg index="5" ref="csvServiceImpl"/>
+		<constructor-arg index="2" ref="questionConverter"/>
 	</bean>
 
 </beans>
