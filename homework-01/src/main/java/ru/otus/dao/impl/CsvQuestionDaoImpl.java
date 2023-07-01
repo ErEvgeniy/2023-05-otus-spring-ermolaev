@@ -10,7 +10,6 @@ import org.springframework.core.io.ResourceLoader;
 import ru.otus.dao.QuestionDao;
 import ru.otus.domain.Answer;
 import ru.otus.domain.Question;
-import ru.otus.exception.QuestionProcessingException;
 import ru.otus.exception.ResourceParsingException;
 
 import java.io.IOException;
@@ -61,10 +60,6 @@ public class CsvQuestionDaoImpl implements QuestionDao {
 	private List<Question> parseQuestions(List<List<String>> questionsParts) {
 		List<Question> questions = new ArrayList<>();
 		for (List<String> questionParts : questionsParts) {
-			if (questionParts.size() % 2 == 0) {
-				throw new QuestionProcessingException("Invalid question structure");
-			}
-
 			Question question = new Question();
 			question.setText(questionParts.get(0));
 			for (int i = 1; i < questionParts.size(); i += 2) {
