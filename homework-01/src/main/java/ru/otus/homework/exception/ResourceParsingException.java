@@ -1,4 +1,4 @@
-package ru.otus.exception;
+package ru.otus.homework.exception;
 
 public class ResourceParsingException extends RuntimeException {
 

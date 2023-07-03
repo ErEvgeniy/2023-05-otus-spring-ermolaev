@@ -1,7 +1,7 @@
-package ru.otus.converter;
+package ru.otus.homework.converter;
 
-import ru.otus.domain.Answer;
-import ru.otus.domain.Question;
+import ru.otus.homework.domain.Answer;
+import ru.otus.homework.domain.Question;
 
 public class QuestionConverter {
 

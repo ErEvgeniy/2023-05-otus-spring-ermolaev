@@ -1,4 +1,4 @@
-package ru.otus.service;
+package ru.otus.homework.service;
 
 public interface ExaminationService {
 

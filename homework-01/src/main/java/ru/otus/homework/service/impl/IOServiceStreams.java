@@ -1,6 +1,6 @@
-package ru.otus.service.impl;
+package ru.otus.homework.service.impl;
 
-import ru.otus.service.IOService;
+import ru.otus.homework.service.IOService;
 
 import java.io.InputStream;
 import java.io.PrintStream;

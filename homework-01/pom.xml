@@ -12,20 +12,10 @@
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<properties>
-		<spring.version>6.0.9</spring.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>

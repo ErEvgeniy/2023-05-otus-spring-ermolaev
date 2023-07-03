@@ -1,4 +1,4 @@
-package ru.otus.dao.impl;
+package ru.otus.homework.dao.impl;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -7,10 +7,10 @@ import com.opencsv.exceptions.CsvException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import ru.otus.dao.QuestionDao;
-import ru.otus.domain.Answer;
-import ru.otus.domain.Question;
-import ru.otus.exception.ResourceParsingException;
+import ru.otus.homework.dao.QuestionDao;
+import ru.otus.homework.domain.Answer;
+import ru.otus.homework.domain.Question;
+import ru.otus.homework.exception.ResourceParsingException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

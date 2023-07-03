@@ -1,7 +1,7 @@
-package ru.otus;
+package ru.otus.homework;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.service.ExaminationService;
+import ru.otus.homework.service.ExaminationService;
 
 public class Application {
 

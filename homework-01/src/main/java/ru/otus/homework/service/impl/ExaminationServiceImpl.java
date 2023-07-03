@@ -1,11 +1,11 @@
-package ru.otus.service.impl;
+package ru.otus.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import ru.otus.converter.QuestionConverter;
-import ru.otus.domain.Question;
-import ru.otus.service.ExaminationService;
-import ru.otus.service.OutputService;
-import ru.otus.service.QuestionService;
+import ru.otus.homework.converter.QuestionConverter;
+import ru.otus.homework.domain.Question;
+import ru.otus.homework.service.ExaminationService;
+import ru.otus.homework.service.OutputService;
+import ru.otus.homework.service.QuestionService;
 
 import java.util.List;
 

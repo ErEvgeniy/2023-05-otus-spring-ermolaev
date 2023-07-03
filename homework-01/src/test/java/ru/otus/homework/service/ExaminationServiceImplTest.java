@@ -1,11 +1,11 @@
-package ru.otus.service;
+package ru.otus.homework.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.otus.converter.QuestionConverter;
-import ru.otus.domain.Answer;
-import ru.otus.domain.Question;
-import ru.otus.service.impl.ExaminationServiceImpl;
+import ru.otus.homework.converter.QuestionConverter;
+import ru.otus.homework.domain.Answer;
+import ru.otus.homework.domain.Question;
+import ru.otus.homework.service.impl.ExaminationServiceImpl;
 
 import java.util.List;
 
