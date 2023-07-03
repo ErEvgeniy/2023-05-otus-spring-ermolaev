@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CsvQuestionDaoImpl implements QuestionDao {
+public class CsvQuestionDao implements QuestionDao {
 
 	private final ResourceLoader resourceLoader;
 
@@ -29,13 +29,9 @@ public class CsvQuestionDaoImpl implements QuestionDao {
 
 	@Override
 	public List<Question> getQuestions() {
-		Resource questionResource = getResource(questionResourcePath);
+		Resource questionResource = resourceLoader.getResource(questionResourcePath);
 		List<List<String>> questionParts = parseCsvResource(questionResource, questionSeparator);
 		return parseQuestions(questionParts);
-	}
-
-	private Resource getResource(String resourcePath) {
-		return resourceLoader.getResource(resourcePath);
 	}
 
 	private List<List<String>> parseCsvResource(Resource csvResource, char separator) {

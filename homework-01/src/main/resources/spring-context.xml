@@ -6,7 +6,7 @@
 
 	<bean id="resourceLoader" class="org.springframework.core.io.DefaultResourceLoader"/>
 
-	<bean id="questionDaoImpl" class="ru.otus.dao.impl.CsvQuestionDaoImpl">
+	<bean id="questionDaoImpl" class="ru.otus.dao.impl.CsvQuestionDao">
 		<constructor-arg index="0" ref="resourceLoader"/>
 		<constructor-arg index="1" value="classpath:questions.csv"/>
 		<constructor-arg index="2" value=";"/>
