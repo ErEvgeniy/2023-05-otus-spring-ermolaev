@@ -18,23 +18,23 @@ public class IOServiceStreams implements IOService {
 	}
 
 	@Override
-	public void outputString(String s){
+	public void outputString(String s) {
 		output.println(s);
 	}
 
 	@Override
-	public int readInt(){
+	public int readInt() {
 		return Integer.parseInt(input.nextLine());
 	}
 
 	@Override
-	public int readIntWithPrompt(String prompt){
+	public int readIntWithPrompt(String prompt) {
 		outputString(prompt);
 		return Integer.parseInt(input.nextLine());
 	}
 
 	@Override
-	public String readStringWithPrompt(String prompt){
+	public String readStringWithPrompt(String prompt) {
 		outputString(prompt);
 		return input.nextLine();
 	}
