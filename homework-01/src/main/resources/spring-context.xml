@@ -6,24 +6,24 @@
 
 	<bean id="resourceLoader" class="org.springframework.core.io.DefaultResourceLoader"/>
 
-	<bean id="questionDaoImpl" class="ru.otus.dao.impl.CsvQuestionDaoImpl">
+	<bean id="questionDaoImpl" class="ru.otus.homework.dao.impl.CsvQuestionDao">
 		<constructor-arg index="0" ref="resourceLoader"/>
 		<constructor-arg index="1" value="classpath:questions.csv"/>
 		<constructor-arg index="2" value=";"/>
 	</bean>
 
-	<bean id="questionServiceImpl" class="ru.otus.service.impl.QuestionServiceImpl">
+	<bean id="questionServiceImpl" class="ru.otus.homework.service.impl.QuestionServiceImpl">
 		<constructor-arg index="0" ref="questionDaoImpl"/>
 	</bean>
 
-	<bean id="ioServiceStreams" class="ru.otus.service.impl.IOServiceStreams">
+	<bean id="ioServiceStreams" class="ru.otus.homework.service.impl.IOServiceStreams">
 		<constructor-arg index="0" value="#{ T(java.lang.System).out }"/>
 		<constructor-arg index="1" value="#{ T(java.lang.System).in  }"/>
 	</bean>
 
-	<bean id="questionConverter" class="ru.otus.converter.QuestionConverter"/>
+	<bean id="questionConverter" class="ru.otus.homework.converter.QuestionConverter"/>
 
-	<bean id="examinationServiceImpl" class="ru.otus.service.impl.ExaminationServiceImpl">
+	<bean id="examinationServiceImpl" class="ru.otus.homework.service.impl.ExaminationServiceImpl">
 		<constructor-arg index="0" ref="questionServiceImpl"/>
 		<constructor-arg index="1" ref="ioServiceStreams"/>
 		<constructor-arg index="2" ref="questionConverter"/>
