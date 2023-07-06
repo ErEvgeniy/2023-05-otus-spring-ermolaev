@@ -32,7 +32,9 @@ public class BookShellCommands {
 		List<Book> books = bookService.findAllBooks();
 		StringBuilder builder = new StringBuilder("Existed books:").append(System.lineSeparator());
 		for (Book book : books) {
-			builder.append(bookConverter.getBookNameWithIdAndGenreAndAuthor(book)).append(System.lineSeparator());
+			builder
+				.append(bookConverter.getBookNameWithIdAndGenreAndAuthor(book))
+				.append(System.lineSeparator());
 		}
 		return builder.toString();
 	}
@@ -77,7 +79,8 @@ public class BookShellCommands {
 			.genre(genre.get())
 			.build();
 		Book createdGenre = bookService.createBook(book);
-		return String.format("Book created: %s", bookConverter.getBookNameWithIdAndGenreAndAuthor(createdGenre));
+		return String.format("Book created: %s",
+			bookConverter.getBookNameWithIdAndGenreAndAuthor(createdGenre));
 	}
 
 	@ShellMethod(value = "Update existed book", key = {"bu", "book-update"})
@@ -91,30 +94,22 @@ public class BookShellCommands {
 		if (existedBook.isEmpty()) {
 			return String.format("Book with id: %d was not found", bookId);
 		}
-
-		Optional<Author> author = Optional.empty();
+		Book bookToUpdate = existedBook.get();
 		if (newAuthorId != null) {
-			author = authorService.findAuthorById(newAuthorId);
+			Optional<Author> author = authorService.findAuthorById(newAuthorId);
 			if (author.isEmpty()) {
 				return String.format("Author with id: %d was not found", newAuthorId);
 			}
+			author.ifPresent(bookToUpdate::setAuthor);
 		}
-
-		Optional<Genre> genre = Optional.empty();
 		if (newGenreId != null) {
-			genre = genreService.findGenreById(newGenreId);
+			Optional<Genre> genre = genreService.findGenreById(newGenreId);
 			if (genre.isEmpty()) {
 				return String.format("Genre with id: %d was not found", newGenreId);
 			}
+			genre.ifPresent(bookToUpdate::setGenre);
 		}
-		Book bookToUpdate = existedBook.get();
-
-		if (newName != null && !newName.isEmpty()) {
-			bookToUpdate.setName(newName);
-		}
-		author.ifPresent(bookToUpdate::setAuthor);
-		genre.ifPresent(bookToUpdate::setGenre);
-
+		Optional.ofNullable(newName).ifPresent(bookToUpdate::setName);
 		Book updatedBook = bookService.updateBook(bookToUpdate);
 		return String.format("Book updated: %s", bookConverter.getBookNameWithIdAndGenreAndAuthor(updatedBook));
 	}

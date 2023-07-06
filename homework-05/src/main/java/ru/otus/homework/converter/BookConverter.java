@@ -19,7 +19,10 @@ public class BookConverter {
 	}
 
 	public String getBookNameWithIdAndGenreAndAuthor(Book book) {
-		return String.format("%s; AUTHOR: %s", getBookNameWithIdAndGenre(book), authorConverter.getAuthorFullName(book.getAuthor()));
+		return String.format("%s; AUTHOR: %s",
+			getBookNameWithIdAndGenre(book),
+			authorConverter.getAuthorFullName(book.getAuthor())
+		);
 	}
 
 }
