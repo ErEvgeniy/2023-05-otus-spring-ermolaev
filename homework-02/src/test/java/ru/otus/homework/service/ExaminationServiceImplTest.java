@@ -2,6 +2,7 @@ package ru.otus.homework.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,9 +15,9 @@ import ru.otus.homework.service.impl.ExaminationServiceImpl;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,13 +41,12 @@ class ExaminationServiceImplTest {
 	private ExaminationServiceImpl examinationService;
 
 	@Test
-	void testDoExamination() {
+	void shouldPrintResultWithRightAnswer() {
 		when(studentService.greetingStudent()).thenReturn(getDummyStudent());
 		when(questionService.getQuestions()).thenReturn(List.of(getDummyQuestion()));
 		when(questionConverter.convertToStringWithAnswers(any(Question.class))).thenReturn("Question 1: Answer 1, Answer 2");
 		doNothing().when(ioService).outputString(anyString());
 		when(ioService.readIntWithPrompt(anyString())).thenReturn(1);
-		when(questionService.isRightAnswer(any(Question.class), anyInt())).thenReturn(true);
 
 		examinationService.doExamination();
 
@@ -55,13 +55,45 @@ class ExaminationServiceImplTest {
 		verify(questionConverter, times(1)).convertToStringWithAnswers(any(Question.class));
 		verify(ioService, times(3)).outputString(anyString());
 		verify(ioService, times(1)).readIntWithPrompt(anyString());
-		verify(questionService, times(1)).isRightAnswer(any(Question.class), anyInt());
+
+		InOrder outputResults = inOrder(ioService);
+		outputResults.verify(ioService)
+			.outputString("Start examination for: Test Testov");
+		outputResults.verify(ioService)
+			.outputString("Question 1: Answer 1, Answer 2");
+		outputResults.verify(ioService)
+			.outputString("Results of examination for: Test Testov. Right answers: 1. Wrong answers: 0.");
+	}
+
+	@Test
+	void shouldPrintResultWithWrongAnswer() {
+		when(studentService.greetingStudent()).thenReturn(getDummyStudent());
+		when(questionService.getQuestions()).thenReturn(List.of(getDummyQuestion()));
+		when(questionConverter.convertToStringWithAnswers(any(Question.class))).thenReturn("Question 1: Answer 1, Answer 2");
+		doNothing().when(ioService).outputString(anyString());
+		when(ioService.readIntWithPrompt(anyString())).thenReturn(2);
+
+		examinationService.doExamination();
+
+		verify(studentService, times(1)).greetingStudent();
+		verify(questionService, times(1)).getQuestions();
+		verify(questionConverter, times(1)).convertToStringWithAnswers(any(Question.class));
+		verify(ioService, times(3)).outputString(anyString());
+		verify(ioService, times(1)).readIntWithPrompt(anyString());
+
+		InOrder outputResults = inOrder(ioService);
+		outputResults.verify(ioService)
+			.outputString("Start examination for: Test Testov");
+		outputResults.verify(ioService)
+			.outputString("Question 1: Answer 1, Answer 2");
+		outputResults.verify(ioService)
+			.outputString("Results of examination for: Test Testov. Right answers: 0. Wrong answers: 1.");
 	}
 
 	private Student getDummyStudent() {
 		Student student = new Student();
 		student.setFirstname("Test");
-		student.setFirstname("Testov");
+		student.setLastname("Testov");
 		return student;
 	}
 

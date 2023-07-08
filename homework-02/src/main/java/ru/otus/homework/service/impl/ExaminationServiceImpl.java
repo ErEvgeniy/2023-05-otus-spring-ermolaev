@@ -49,7 +49,7 @@ public class ExaminationServiceImpl implements ExaminationService {
 		for (Question question : questionsToAsk) {
 			ioService.outputString(questionConverter.convertToStringWithAnswers(question));
 			int answerId = ioService.readIntWithPrompt("Please enter number of answer");
-			if (questionService.isRightAnswer(question, answerId)) {
+			if (question.isRightAnswer(answerId)) {
 				rightAnsweredQuestions.add(question);
 			} else {
 				wrongAnsweredQuestions.add(question);

@@ -13,4 +13,13 @@ public class Question {
 
 	private List<Answer> answers;
 
+	public boolean isRightAnswer(int answerId) {
+		for (Answer answer : this.answers) {
+			if (answer.getId() == answerId && answer.isRight()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
