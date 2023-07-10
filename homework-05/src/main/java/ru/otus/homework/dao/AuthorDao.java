@@ -7,14 +7,6 @@ import java.util.Optional;
 
 public interface AuthorDao {
 
-	String ID_COLUMN = "ID";
-
-	String FIRSTNAME_COLUMN = "FIRSTNAME";
-
-	String PATRONYMIC_COLUMN = "PATRONYMIC";
-
-	String LASTNAME_COLUMN = "LASTNAME";
-
 	Optional<Author> findById(long id);
 
 	List<Author> findAll();
@@ -23,6 +15,6 @@ public interface AuthorDao {
 
 	Author update(Author author);
 
-	int deleteById(long id);
+	void deleteById(long id);
 
 }

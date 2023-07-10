@@ -49,15 +49,15 @@ class BookDaoJdbcTest {
 			.hasSize(7);
 
 		Author author = Author.builder()
-			.id(1)
+			.id(1L)
 			.build();
 
 		Genre genre = Genre.builder()
-			.id(1)
+			.id(1L)
 			.build();
 
 		Book book = Book.builder()
-			.id(8)
+			.id(8L)
 			.name("Test")
 			.genre(genre)
 			.author(author)
@@ -74,15 +74,15 @@ class BookDaoJdbcTest {
 	@Test
 	void shouldUpdateBook() {
 		Author author = Author.builder()
-			.id(2)
+			.id(2L)
 			.build();
 
 		Genre genre = Genre.builder()
-			.id(2)
+			.id(2L)
 			.build();
 
 		Book book = Book.builder()
-			.id(1)
+			.id(1L)
 			.name("Test")
 			.genre(genre)
 			.author(author)

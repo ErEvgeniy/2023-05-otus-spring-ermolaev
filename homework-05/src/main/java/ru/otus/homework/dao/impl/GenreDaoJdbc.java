@@ -2,16 +2,19 @@ package ru.otus.homework.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.homework.dao.GenreDao;
-import ru.otus.homework.dao.mapper.GenreMapper;
 import ru.otus.homework.domain.Genre;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -23,9 +26,10 @@ public class GenreDaoJdbc implements GenreDao {
 	@Override
 	public Optional<Genre> findById(long id) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource()
-			.addValue(ID_COLUMN, id);
+			.addValue("GENRE_ID", id);
 		try {
-			return Optional.ofNullable(jdbc.queryForObject("SELECT ID, NAME FROM GENRE WHERE ID = :ID",
+			return Optional.ofNullable(jdbc.queryForObject("SELECT GENRE_ID, NAME " +
+					"FROM GENRE WHERE GENRE_ID = :GENRE_ID",
 				parameters, new GenreMapper()));
 		} catch (IncorrectResultSizeDataAccessException ex) {
 			return Optional.empty();
@@ -34,35 +38,48 @@ public class GenreDaoJdbc implements GenreDao {
 
 	@Override
 	public List<Genre> findAll() {
-		return jdbc.query("SELECT ID, NAME FROM GENRE", new GenreMapper());
+		return jdbc.query("SELECT GENRE_ID, NAME FROM GENRE", new GenreMapper());
 	}
 
 	@Override
 	public Genre create(Genre genre) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource()
-			.addValue(NAME_COLUMN, genre.getName());
+			.addValue("NAME", genre.getName());
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
-		jdbc.update("INSERT INTO GENRE(NAME) VALUES (:NAME)", parameters, keyHolder, new String[]{"ID"});
+		jdbc.update("INSERT INTO GENRE(NAME) VALUES (:NAME)", parameters, keyHolder, new String[]{"GENRE_ID"});
 
-		Optional.ofNullable(keyHolder.getKey()).ifPresent(key -> genre.setId(key.longValue()));
+		Objects.requireNonNull(keyHolder.getKey());
+		genre.setId(keyHolder.getKey().longValue());
 		return genre;
 	}
 
 	@Override
 	public Genre update(Genre genre) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource()
-			.addValue(ID_COLUMN, genre.getId())
-			.addValue(NAME_COLUMN, genre.getName());
-		jdbc.update("UPDATE GENRE SET NAME = :NAME WHERE ID = :ID", parameters);
+			.addValue("GENRE_ID", genre.getId())
+			.addValue("NAME", genre.getName());
+		jdbc.update("UPDATE GENRE SET NAME = :NAME WHERE GENRE_ID = :GENRE_ID", parameters);
 		return genre;
 	}
 
 	@Override
-	public int deleteById(long id) {
+	public void deleteById(long id) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource()
-			.addValue(ID_COLUMN, id);
-		return jdbc.update("DELETE FROM GENRE WHERE ID = :ID", parameters);
+			.addValue("GENRE_ID", id);
+		jdbc.update("DELETE FROM GENRE WHERE GENRE_ID = :GENRE_ID", parameters);
+	}
+
+	private static class GenreMapper implements RowMapper<Genre> {
+
+		@Override
+		public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
+			return Genre.builder()
+				.id(rs.getLong("GENRE_ID"))
+				.name(rs.getString("NAME"))
+				.build();
+		}
+
 	}
 
 }

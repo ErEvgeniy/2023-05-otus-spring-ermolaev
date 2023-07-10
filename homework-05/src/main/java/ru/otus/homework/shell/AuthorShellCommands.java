@@ -8,10 +8,10 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.homework.converter.AuthorConverter;
 import ru.otus.homework.domain.Author;
+import ru.otus.homework.exception.DataNotFoundException;
 import ru.otus.homework.service.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
 
 @ShellComponent
 @RequiredArgsConstructor
@@ -33,23 +33,19 @@ public class AuthorShellCommands extends AbstractShellComponent {
 
 	@ShellMethod(value = "Print author by id", key = {"a", "author-by-id"})
 	public String authorById(@ShellOption long authorId) {
-		Optional<Author> author = authorService.findAuthorById(authorId);
-		if (author.isPresent()) {
-			return authorConverter.getAuthorFullNameWithId(author.get());
-		} else {
-			return String.format("Author with id: %d not found", authorId);
+		try {
+			Author author = authorService.findAuthorById(authorId);
+			return authorConverter.getAuthorFullNameWithId(author);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
 		}
 	}
 
 	@ShellMethod(value = "Delete author by id", key = {"ad", "author-delete"})
 	public String authorDelete(@ShellOption long authorId) {
 		try {
-			int deletedRows = authorService.deleteAuthorById(authorId);
-			if (deletedRows > 0) {
-				return String.format("Author with id: %d successfully deleted", authorId);
-			} else {
-				return String.format("Author with id: %d was not found to delete", authorId);
-			}
+			authorService.deleteAuthorById(authorId);
+			return String.format("Author with id: %d successfully deleted", authorId);
 		} catch (DataIntegrityViolationException ex) {
 			return String.format("Author with id: %d is used. Unable to delete", authorId);
 		}
@@ -66,33 +62,36 @@ public class AuthorShellCommands extends AbstractShellComponent {
 			.patronymic(patronymic)
 			.lastname(lastname)
 			.build();
-		Author createdAuthor = authorService.createAuthor(newAuthor);
+
+		Author createdAuthor;
+		try {
+			createdAuthor = authorService.createAuthor(newAuthor);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
+		}
 		return String.format("Author created: %s", authorConverter.getAuthorFullNameWithId(createdAuthor));
 	}
 
 	@ShellMethod(value = "Update existed author", key = {"au", "author-update"})
 	public String authorUpdate(
-		@ShellOption(value = { "-i", "--id" }) int id,
+		@ShellOption(value = { "-i", "--id" }) long id,
 		@ShellOption(defaultValue = ShellOption.NULL, value = { "-f", "--firstname" }) String newFirstname,
 		@ShellOption(defaultValue = ShellOption.NULL, value = { "-p", "--patronymic" }) String newPatronymic,
 		@ShellOption(defaultValue = ShellOption.NULL, value = { "-l", "--lastname" }) String newLastname
 	) {
-		Optional<Author> existedAuthor = authorService.findAuthorById(id);
-		if (existedAuthor.isEmpty()) {
-			return String.format("Author with id: %d was not found", id);
-		}
-		Author authorToUpdate = existedAuthor.get();
-		if (newFirstname != null && !newFirstname.isEmpty()) {
-			authorToUpdate.setFirstname(newFirstname);
-		}
-		if (newPatronymic != null && !newPatronymic.isEmpty()) {
-			authorToUpdate.setPatronymic(newPatronymic);
-		}
-		if (newLastname != null && !newLastname.isEmpty()) {
-			authorToUpdate.setLastname(newLastname);
-		}
+		Author author = Author.builder()
+			.id(id)
+			.firstname(newFirstname)
+			.patronymic(newPatronymic)
+			.lastname(newLastname)
+			.build();
 
-		Author updatedAuthor = authorService.updateAuthor(authorToUpdate);
+		Author updatedAuthor;
+		try {
+			updatedAuthor = authorService.updateAuthor(author);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
+		}
 		return String.format("Author updated: %s", authorConverter.getAuthorFullNameWithId(updatedAuthor));
 	}
 

@@ -7,10 +7,6 @@ import java.util.Optional;
 
 public interface GenreDao {
 
-	String ID_COLUMN = "ID";
-
-	String NAME_COLUMN = "NAME";
-
 	Optional<Genre> findById(long id);
 
 	List<Genre> findAll();
@@ -19,6 +15,6 @@ public interface GenreDao {
 
 	Genre update(Genre genre);
 
-	int deleteById(long id);
+	void deleteById(long id);
 
 }

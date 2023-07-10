@@ -7,10 +7,10 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.otus.homework.converter.GenreConverter;
 import ru.otus.homework.domain.Genre;
+import ru.otus.homework.exception.DataNotFoundException;
 import ru.otus.homework.service.GenreService;
 
 import java.util.List;
-import java.util.Optional;
 
 @ShellComponent
 @RequiredArgsConstructor
@@ -32,23 +32,19 @@ public class GenreShellCommands {
 
 	@ShellMethod(value = "Print genre by id", key = {"g", "genre-by-id"})
 	public String genreById(@ShellOption long genreId) {
-		Optional<Genre> genre = genreService.findGenreById(genreId);
-		if (genre.isPresent()) {
-			return genreConverter.getGenreWithId(genre.get());
-		} else {
-			return String.format("Genre with id: %d not found", genreId);
+		try {
+			Genre genre = genreService.findGenreById(genreId);
+			return genreConverter.getGenreWithId(genre);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
 		}
 	}
 
 	@ShellMethod(value = "Delete genre by id", key = {"gd", "genre-delete"})
 	public String genreDelete(@ShellOption long genreId) {
 		try {
-			int deletedRows = genreService.deleteGenreById(genreId);
-			if (deletedRows > 0) {
-				return String.format("Genre with id: %d successfully deleted", genreId);
-			} else {
-				return String.format("Genre with id: %d was not found to delete", genreId);
-			}
+			genreService.deleteGenreById(genreId);
+			return String.format("Genre with id: %d successfully deleted", genreId);
 		} catch (DataIntegrityViolationException ex) {
 			return String.format("Genre with id: %d is used. Unable to delete", genreId);
 		}
@@ -61,26 +57,32 @@ public class GenreShellCommands {
 		Genre genre = Genre.builder()
 			.name(name)
 			.build();
-		Genre createdGenre = genreService.createGenre(genre);
+
+		Genre createdGenre;
+		try {
+			createdGenre = genreService.createGenre(genre);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
+		}
 		return String.format("Genre created: %s", genreConverter.getGenreWithId(createdGenre));
 	}
 
 	@ShellMethod(value = "Update existed genre", key = {"gu", "genre-update"})
 	public String genreUpdate(
-		@ShellOption(value = { "-i", "--id" }) int id,
+		@ShellOption(value = { "-i", "--id" }) long id,
 		@ShellOption(defaultValue = ShellOption.NULL, value = { "-n", "--name" }) String newName
 	) {
-		Optional<Genre> existedGenre = genreService.findGenreById(id);
-		if (existedGenre.isEmpty()) {
-			return String.format("Genre with id: %d was not found", id);
-		}
-		Genre genreToUpdate = existedGenre.get();
+		Genre genre = Genre.builder()
+			.id(id)
+			.name(newName)
+			.build();
 
-		if (newName != null && !newName.isEmpty()) {
-			genreToUpdate.setName(newName);
+		Genre updatedGenre;
+		try {
+			updatedGenre = genreService.updateGenre(genre);
+		} catch (DataNotFoundException ex) {
+			return ex.getMessage();
 		}
-
-		Genre updatedGenre = genreService.updateGenre(genreToUpdate);
 		return String.format("Genre updated: %s", genreConverter.getGenreWithId(updatedGenre));
 	}
 

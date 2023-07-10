@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface GenreService {
 
-	Optional<Genre> findGenreById(long id);
+	Optional<Genre> findOptionalGenreById(long id);
+
+	Genre findGenreById(long id);
 
 	List<Genre> findAllGenres();
 
@@ -15,6 +17,6 @@ public interface GenreService {
 
 	Genre updateGenre(Genre genre);
 
-	int deleteGenreById(long id);
+	void deleteGenreById(long id);
 
 }

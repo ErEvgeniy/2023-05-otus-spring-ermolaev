@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface AuthorService {
 
-	Optional<Author> findAuthorById(long id);
+	Optional<Author> findOptionalAuthorById(long id);
+
+	Author findAuthorById(long id);
 
 	List<Author> findAllAuthors();
 
@@ -15,6 +17,6 @@ public interface AuthorService {
 
 	Author updateAuthor(Author author);
 
-	int deleteAuthorById(long id);
+	void deleteAuthorById(long id);
 
 }

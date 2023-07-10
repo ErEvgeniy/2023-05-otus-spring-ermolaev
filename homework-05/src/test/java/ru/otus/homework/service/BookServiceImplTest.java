@@ -8,12 +8,14 @@ import ru.otus.homework.dao.BookDao;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Genre;
+import ru.otus.homework.exception.DataNotFoundException;
 import ru.otus.homework.service.impl.BookServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,14 +25,20 @@ class BookServiceImplTest {
 
 	private static final String BOOK_NAME = "Test";
 
-	private static final int BOOK_ID = 1;
+	private static final Long BOOK_ID = 1L;
 
-	private static final int AUTHOR_ID = 2;
+	private static final Long AUTHOR_ID = 2L;
 
-	private static final int GENRE_ID = 3;
+	private static final Long GENRE_ID = 3L;
 
 	@Mock
 	private BookDao bookDao;
+
+	@Mock
+	private AuthorService authorService;
+
+	@Mock
+	private GenreService genreService;
 
 	@InjectMocks
 	private BookServiceImpl bookService;
@@ -38,13 +46,13 @@ class BookServiceImplTest {
 	@Test
 	void shouldFindOneBookById() {
 		when(bookDao.findById(BOOK_ID)).thenReturn(Optional.of(getDummyBook()));
-		Optional<Book> book = bookService.findBookById(BOOK_ID);
+		Book book = bookService.findBookById(BOOK_ID);
 
-		assertThat(book).isPresent();
-		assertThat(book.get().getId()).isEqualTo(BOOK_ID);
-		assertThat(book.get().getName()).isEqualTo(BOOK_NAME);
-		assertThat(book.get().getAuthor().getId()).isEqualTo(AUTHOR_ID);
-		assertThat(book.get().getGenre().getId()).isEqualTo(GENRE_ID);
+		assertThat(book).isNotNull();
+		assertThat(book.getId()).isEqualTo(BOOK_ID);
+		assertThat(book.getName()).isEqualTo(BOOK_NAME);
+		assertThat(book.getAuthor().getId()).isEqualTo(AUTHOR_ID);
+		assertThat(book.getGenre().getId()).isEqualTo(GENRE_ID);
 
 		verify(bookDao, times(1)).findById(BOOK_ID);
 	}
@@ -52,9 +60,8 @@ class BookServiceImplTest {
 	@Test
 	void shouldNotFindBookById() {
 		when(bookDao.findById(BOOK_ID)).thenReturn(Optional.empty());
-		Optional<Book> book = bookService.findBookById(BOOK_ID);
 
-		assertThat(book).isEmpty();
+		assertThrows(DataNotFoundException.class, () -> bookService.findBookById(BOOK_ID));
 
 		verify(bookDao, times(1)).findById(BOOK_ID);
 	}
@@ -75,12 +82,16 @@ class BookServiceImplTest {
 	void shouldCreateBook() {
 		Book bookToCreate = getDummyBook();
 		when(bookDao.create(bookToCreate)).thenReturn(bookToCreate);
+		when(authorService.findAuthorById(AUTHOR_ID)).thenReturn(getDummyAuthor());
+		when(genreService.findGenreById(GENRE_ID)).thenReturn(getDummyGenre());
 		Book book = bookService.createBook(bookToCreate);
 
 		assertThat(book)
 			.isNotNull()
 			.isEqualTo(bookToCreate);
 
+		verify(authorService, times(1)).findAuthorById(AUTHOR_ID);
+		verify(genreService, times(1)).findGenreById(GENRE_ID);
 		verify(bookDao, times(1)).create(bookToCreate);
 	}
 
@@ -88,40 +99,42 @@ class BookServiceImplTest {
 	void shouldUpdateBook() {
 		Book bookToUpdate = getDummyBook();
 		when(bookDao.update(bookToUpdate)).thenReturn(bookToUpdate);
+		when(bookDao.findById(BOOK_ID)).thenReturn(Optional.of(bookToUpdate));
+		when(authorService.findAuthorById(AUTHOR_ID)).thenReturn(getDummyAuthor());
+		when(genreService.findGenreById(GENRE_ID)).thenReturn(getDummyGenre());
 		Book book = bookService.updateBook(bookToUpdate);
 
 		assertThat(book)
 			.isNotNull()
 			.isEqualTo(bookToUpdate);
 
+		verify(bookDao, times(1)).findById(BOOK_ID);
+		verify(authorService, times(1)).findAuthorById(AUTHOR_ID);
+		verify(genreService, times(1)).findGenreById(GENRE_ID);
 		verify(bookDao, times(1)).update(bookToUpdate);
 	}
 
-	@Test
-	void shouldDeleteBookById() {
-		when(bookDao.deleteById(BOOK_ID)).thenReturn(1);
-		int processedRows = bookService.deleteBookById(BOOK_ID);
-
-		assertThat(processedRows)
-			.isEqualTo(1);
-
-		verify(bookDao, times(1)).deleteById(BOOK_ID);
-	}
-
 	private Book getDummyBook() {
-		Author author = Author.builder()
-			.id(AUTHOR_ID)
-			.build();
-
-		Genre genre = Genre.builder()
-			.id(GENRE_ID)
-			.build();
+		Author author = getDummyAuthor();
+		Genre genre = getDummyGenre();
 
 		return Book.builder()
 			.id(BOOK_ID)
 			.name(BOOK_NAME)
 			.genre(genre)
 			.author(author)
+			.build();
+	}
+
+	private Author getDummyAuthor() {
+		return Author.builder()
+			.id(AUTHOR_ID)
+			.build();
+	}
+
+	private Genre getDummyGenre() {
+		return Genre.builder()
+			.id(GENRE_ID)
 			.build();
 	}
 }
