@@ -91,13 +91,7 @@ public class BookShellCommands {
 			.genre(new Genre().setId(newGenreId))
 			.build();
 
-		Book updatedBook;
-		try {
-			updatedBook = bookService.updateBook(book);
-		} catch (DataNotFoundException ex) {
-			return ex.getMessage();
-		}
-
+		Book updatedBook = bookService.updateBook(book);
 		return String.format("Book updated: %s", bookConverter.getBookNameWithIdAndGenreAndAuthor(updatedBook));
 	}
 
