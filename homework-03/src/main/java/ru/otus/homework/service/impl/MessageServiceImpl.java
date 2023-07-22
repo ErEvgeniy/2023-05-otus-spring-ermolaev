@@ -3,7 +3,7 @@ package ru.otus.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.configuration.AppProperties;
+import ru.otus.homework.configuration.LocaleProvider;
 import ru.otus.homework.service.MessageService;
 
 @Service
@@ -12,7 +12,7 @@ public class MessageServiceImpl implements MessageService {
 
 	private final MessageSource messageSource;
 
-	private final AppProperties appProperties;
+	private final LocaleProvider appProperties;
 
 	@Override
 	public String getMessage(String code) {

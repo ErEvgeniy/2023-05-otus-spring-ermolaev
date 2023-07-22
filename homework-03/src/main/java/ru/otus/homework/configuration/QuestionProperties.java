@@ -6,15 +6,18 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 @Getter
 @ConfigurationProperties(prefix = "questions")
-public class QuestionProperties {
+public class QuestionProperties implements QuestionProvider {
 
-	private final String path;
+	private final String pathEN;
 
-	private final String separator;
+	private final String pathRU;
+
+	private final char separator;
 
 	@ConstructorBinding
-	public QuestionProperties(String path, String separator) {
-		this.path = path;
+	public QuestionProperties(String pathEN, String pathRU, char separator) {
+		this.pathEN = pathEN;
+		this.pathRU = pathRU;
 		this.separator = separator;
 	}
 
