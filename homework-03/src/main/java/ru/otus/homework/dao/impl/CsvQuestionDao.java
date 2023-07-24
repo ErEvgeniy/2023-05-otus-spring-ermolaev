@@ -5,15 +5,13 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import ru.otus.homework.configuration.LocaleProvider;
 import ru.otus.homework.configuration.QuestionProvider;
+import ru.otus.homework.configuration.ResourceProvider;
 import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.exception.ResourceParsingException;
-import ru.otus.homework.exception.UnexpectedLocaleException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,35 +22,23 @@ import java.util.List;
 @Component
 public class CsvQuestionDao implements QuestionDao {
 
-	private final ResourceLoader resourceLoader;
-
-	private final LocaleProvider localeProvider;
+	private final ResourceProvider resourceProvider;
 
 	private final QuestionProvider questionProvider;
 
 	public CsvQuestionDao(
-		ResourceLoader resourceLoader,
-		LocaleProvider localeProvider,
+		ResourceProvider resourceProvider,
 		QuestionProvider questionProvider
 	) {
-		this.resourceLoader = resourceLoader;
-		this.localeProvider = localeProvider;
+		this.resourceProvider = resourceProvider;
 		this.questionProvider = questionProvider;
 	}
 
 	@Override
 	public List<Question> getQuestions() {
-		Resource questionResource = getResource();
+		Resource questionResource = resourceProvider.getResource();
 		List<List<String>> questionParts = parseCsvResource(questionResource, questionProvider.getSeparator());
 		return parseQuestions(questionParts);
-	}
-
-	private Resource getResource() {
-		return switch (localeProvider.getLocale().getLanguage()) {
-			case "en" -> resourceLoader.getResource(questionProvider.getPathEN());
-			case "ru" -> resourceLoader.getResource(questionProvider.getPathRU());
-			default -> throw new UnexpectedLocaleException("Unexpected locale for questions");
-		};
 	}
 
 	private List<List<String>> parseCsvResource(Resource csvResource, char separator) {

@@ -9,7 +9,7 @@ import ru.otus.homework.service.IOService;
 import ru.otus.homework.service.impl.IOServiceStreams;
 
 @Configuration
-@EnableConfigurationProperties({AppProperties.class, QuestionProperties.class})
+@EnableConfigurationProperties({AppProperties.class})
 public class AppConfiguration {
 
 	@Bean
@@ -20,6 +20,11 @@ public class AppConfiguration {
 	@Bean
 	public ResourceLoader defaultResourceLoader() {
 		return new DefaultResourceLoader();
+	}
+
+	@Bean
+	public ResourceProvider resourceProvider(ResourceLoader resourceLoader, AppProperties appProperties) {
+		return new AppProperties.CsvResourceProvider(resourceLoader, appProperties);
 	}
 
 }
