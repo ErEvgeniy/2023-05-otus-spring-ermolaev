@@ -19,6 +19,7 @@
 	<modules>
 		<module>homework-01</module>
 		<module>homework-02</module>
+		<module>homework-03</module>
     <module>homework-05</module>
 	</modules>
 
@@ -95,6 +96,8 @@
 				</dependencies>
 				<configuration>
 					<configLocation>${checkstyle.config.url}</configLocation>
+					<includeResources>false</includeResources>
+					<includeTestResources>false</includeTestResources>
 				</configuration>
 				<executions>
 					<execution>
