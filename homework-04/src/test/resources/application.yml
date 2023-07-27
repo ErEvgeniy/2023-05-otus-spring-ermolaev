@@ -1,0 +1,17 @@
+application:
+  locale: ru_RU
+  pathEN: questions/questions_en.csv
+  pathRU: questions/questions_ru.csv
+  separator: ;
+
+spring:
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    shell:
+      interactive:
+        enabled: false
+      script:
+        spring:
+          shell:
+            script: false
