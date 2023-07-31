@@ -37,7 +37,12 @@ public class BookRepositoryImpl extends AbstractRepository<Book> implements Book
 		TypedQuery<Book> query = getEm().createQuery("SELECT b FROM Book b " +
 			"LEFT JOIN FETCH b.author " +
 			"LEFT JOIN FETCH b.genre", Book.class);
-		List<Book> books = query.getResultList();
+		return query.getResultList();
+	}
+
+	@Override
+	public List<Book> findAllWithComments() {
+		List<Book> books = findAll();
 		if (books != null && !books.isEmpty()) {
 			books = loadComments(books);
 		}

@@ -8,20 +8,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "GENRE")
+@Table(name = "GENRES")
 public class Genre implements IdEntity {
 
 	@Id
+	@Column(name = "GENRE_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 

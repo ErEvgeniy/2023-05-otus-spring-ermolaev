@@ -28,18 +28,12 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Book> findOptionalBookById(long id) {
-		return bookRepository.findById(id);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Book findBookById(long id) {
 		return getBook(id);
 	}
 
 	private Book getBook(long id) {
-		Optional<Book> bookOptional = findOptionalBookById(id);
+		Optional<Book> bookOptional = bookRepository.findById(id);
 		return bookOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Book with id: %d not found", id)));
 	}

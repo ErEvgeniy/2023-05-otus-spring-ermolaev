@@ -11,20 +11,23 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "COMMENTS")
 public class Comment implements IdEntity {
 
 	@Id
+	@Column(name = "COMMENT_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -32,7 +35,7 @@ public class Comment implements IdEntity {
 	private String text;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BOOK")
+	@JoinColumn(name = "BOOK_ID")
 	private Book book;
 
 }

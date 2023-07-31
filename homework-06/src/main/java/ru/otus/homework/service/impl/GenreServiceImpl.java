@@ -19,18 +19,12 @@ public class GenreServiceImpl implements GenreService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Genre> findOptionalGenreById(long id) {
-		return genreRepository.findById(id);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Genre findGenreById(long id) {
 		return getGenre(id);
 	}
 
 	private Genre getGenre(long id) {
-		Optional<Genre> genreOptional = findOptionalGenreById(id);
+		Optional<Genre> genreOptional = genreRepository.findById(id);
 		return genreOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Genre with id: %d not found", id)));
 	}

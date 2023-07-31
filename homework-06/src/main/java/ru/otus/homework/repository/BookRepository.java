@@ -9,6 +9,8 @@ public interface BookRepository extends Repository<Book> {
 
 	List<Book> findAll();
 
+	List<Book> findAllWithComments();
+
 	Optional<Book> findById(Long id);
 
 }

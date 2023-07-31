@@ -19,18 +19,12 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Author> findOptionalAuthorById(long id) {
-		return authorRepository.findById(id);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Author findAuthorById(long id) {
 		return getAuthor(id);
 	}
 
 	private Author getAuthor(long id) {
-		Optional<Author> authorOptional = findOptionalAuthorById(id);
+		Optional<Author> authorOptional = authorRepository.findById(id);
 		return authorOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Author with id: %d not found", id)));
 	}

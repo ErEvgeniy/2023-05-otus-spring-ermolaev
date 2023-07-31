@@ -23,18 +23,12 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Comment> findOptionalCommentById(long id) {
-		return commentRepository.findById(id);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
 	public Comment findCommentById(long id) {
 		return getComment(id);
 	}
 
 	private Comment getComment(long id) {
-		Optional<Comment> commentOptional = findOptionalCommentById(id);
+		Optional<Comment> commentOptional = commentRepository.findById(id);
 		return commentOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Comment with id: %d not found", id)));
 	}

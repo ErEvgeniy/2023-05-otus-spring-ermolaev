@@ -8,20 +8,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "AUTHOR")
+@Table(name = "AUTHORS")
 public class Author implements IdEntity {
 
 	@Id
+	@Column(name = "AUTHOR_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
