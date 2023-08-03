@@ -6,12 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Genre;
 import ru.otus.homework.exception.DataNotPresentException;
+import ru.otus.homework.repository.AuthorRepository;
 import ru.otus.homework.repository.BookRepository;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.exception.DataNotFoundException;
-import ru.otus.homework.service.AuthorService;
+import ru.otus.homework.repository.GenreRepository;
 import ru.otus.homework.service.BookService;
-import ru.otus.homework.service.GenreService;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +22,9 @@ public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
 
-	private final AuthorService authorService;
+	private final AuthorRepository authorRepository;
 
-	private final GenreService genreService;
+	private final GenreRepository genreRepository;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -69,14 +69,18 @@ public class BookServiceImpl implements BookService {
 		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
 			throw new DataNotPresentException("Author id is not present");
 		}
-		return authorService.findAuthorById(book.getAuthor().getId());
+		long authorId = book.getAuthor().getId();
+		return authorRepository.findById(authorId)
+			.orElseThrow(() -> new DataNotFoundException(String.format("Author with id: %d not found", authorId)));
 	}
 
 	private Genre checkBookGenre(Book book) {
 		if (book.getGenre() == null || book.getGenre().getId() == null) {
 			throw new DataNotPresentException("Genre id is not present");
 		}
-		return genreService.findGenreById(book.getGenre().getId());
+		long genreId = book.getGenre().getId();
+		return genreRepository.findById(genreId)
+			.orElseThrow(() -> new DataNotFoundException(String.format("Genre with id: %d not found", genreId)));
 	}
 
 	@Override

@@ -17,6 +17,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -46,6 +49,8 @@ public class Book implements IdEntity {
 	@JoinColumn(name = "AUTHOR_ID")
 	private Author author;
 
+	@Fetch(FetchMode.SELECT)
+	@BatchSize(size = 10)
 	@OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL,
 		orphanRemoval = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "BOOK_ID")
