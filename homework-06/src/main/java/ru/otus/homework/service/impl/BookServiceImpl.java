@@ -70,8 +70,8 @@ public class BookServiceImpl implements BookService {
 			throw new DataNotPresentException("Author id is not present");
 		}
 		long authorId = book.getAuthor().getId();
-		return authorRepository.findById(authorId)
-			.orElseThrow(() -> new DataNotFoundException(String.format("Author with id: %d not found", authorId)));
+		return authorRepository.findById(authorId).orElseThrow(() -> new DataNotFoundException(
+				String.format("Author with id: %d not found", authorId)));
 	}
 
 	private Genre checkBookGenre(Book book) {
@@ -79,8 +79,8 @@ public class BookServiceImpl implements BookService {
 			throw new DataNotPresentException("Genre id is not present");
 		}
 		long genreId = book.getGenre().getId();
-		return genreRepository.findById(genreId)
-			.orElseThrow(() -> new DataNotFoundException(String.format("Genre with id: %d not found", genreId)));
+		return genreRepository.findById(genreId).orElseThrow(() -> new DataNotFoundException(
+			String.format("Genre with id: %d not found", genreId)));
 	}
 
 	@Override

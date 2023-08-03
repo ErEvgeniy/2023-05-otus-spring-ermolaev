@@ -8,7 +8,9 @@ import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Genre;
 import ru.otus.homework.exception.DataNotFoundException;
+import ru.otus.homework.repository.AuthorRepository;
 import ru.otus.homework.repository.BookRepository;
+import ru.otus.homework.repository.GenreRepository;
 import ru.otus.homework.service.impl.BookServiceImpl;
 
 import java.util.List;
@@ -35,10 +37,10 @@ class BookServiceImplTest {
 	private BookRepository bookRepository;
 
 	@Mock
-	private AuthorService authorService;
+	private AuthorRepository authorRepository;
 
 	@Mock
-	private GenreService genreService;
+	private GenreRepository genreRepository;
 
 	@InjectMocks
 	private BookServiceImpl bookService;
@@ -82,16 +84,16 @@ class BookServiceImplTest {
 	void shouldCreateBook() {
 		Book bookToCreate = getDummyBook();
 		when(bookRepository.save(bookToCreate)).thenReturn(bookToCreate);
-		when(authorService.findAuthorById(AUTHOR_ID)).thenReturn(getDummyAuthor());
-		when(genreService.findGenreById(GENRE_ID)).thenReturn(getDummyGenre());
+		when(authorRepository.findById(AUTHOR_ID)).thenReturn(Optional.of(getDummyAuthor()));
+		when(genreRepository.findById(GENRE_ID)).thenReturn(Optional.of(getDummyGenre()));
 		Book book = bookService.createBook(bookToCreate);
 
 		assertThat(book)
 			.isNotNull()
 			.isEqualTo(bookToCreate);
 
-		verify(authorService, times(1)).findAuthorById(AUTHOR_ID);
-		verify(genreService, times(1)).findGenreById(GENRE_ID);
+		verify(authorRepository, times(1)).findById(AUTHOR_ID);
+		verify(genreRepository, times(1)).findById(GENRE_ID);
 		verify(bookRepository, times(1)).save(bookToCreate);
 	}
 
@@ -100,8 +102,8 @@ class BookServiceImplTest {
 		Book bookToUpdate = getDummyBook();
 		when(bookRepository.save(bookToUpdate)).thenReturn(bookToUpdate);
 		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(bookToUpdate));
-		when(authorService.findAuthorById(AUTHOR_ID)).thenReturn(getDummyAuthor());
-		when(genreService.findGenreById(GENRE_ID)).thenReturn(getDummyGenre());
+		when(authorRepository.findById(AUTHOR_ID)).thenReturn(Optional.of(getDummyAuthor()));
+		when(genreRepository.findById(GENRE_ID)).thenReturn(Optional.of(getDummyGenre()));
 		Book book = bookService.updateBook(bookToUpdate);
 
 		assertThat(book)
@@ -109,8 +111,8 @@ class BookServiceImplTest {
 			.isEqualTo(bookToUpdate);
 
 		verify(bookRepository, times(1)).findById(BOOK_ID);
-		verify(authorService, times(1)).findAuthorById(AUTHOR_ID);
-		verify(genreService, times(1)).findGenreById(GENRE_ID);
+		verify(authorRepository, times(1)).findById(AUTHOR_ID);
+		verify(genreRepository, times(1)).findById(GENRE_ID);
 		verify(bookRepository, times(1)).save(bookToUpdate);
 	}
 
