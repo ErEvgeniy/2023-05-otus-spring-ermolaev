@@ -20,10 +20,6 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	@Transactional(readOnly = true)
 	public Author findAuthorById(long id) {
-		return getAuthor(id);
-	}
-
-	private Author getAuthor(long id) {
 		Optional<Author> authorOptional = authorRepository.findById(id);
 		return authorOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Author with id: %d not found", id)));
@@ -44,7 +40,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	@Transactional
 	public Author updateAuthor(Author author) {
-		Author toUpdate = getAuthor(author.getId());
+		Author toUpdate = findAuthorById(author.getId());
 		String newFirstname = author.getFirstname();
 		if (newFirstname != null && !newFirstname.isEmpty()) {
 			toUpdate.setFirstname(newFirstname);
@@ -63,7 +59,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	@Transactional
 	public void deleteAuthorById(long id) {
-		Author existAuthor = getAuthor(id);
+		Author existAuthor = findAuthorById(id);
 		authorRepository.remove(existAuthor);
 	}
 
