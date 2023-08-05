@@ -3,8 +3,6 @@ package ru.otus.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.homework.domain.Author;
-import ru.otus.homework.domain.Genre;
 import ru.otus.homework.exception.DataNotPresentException;
 import ru.otus.homework.repository.AuthorRepository;
 import ru.otus.homework.repository.BookRepository;
@@ -29,10 +27,6 @@ public class BookServiceImpl implements BookService {
 	@Override
 	@Transactional(readOnly = true)
 	public Book findBookById(long id) {
-		return getBook(id);
-	}
-
-	private Book getBook(long id) {
 		Optional<Book> bookOptional = bookRepository.findByIdWithAuthorAndGenre(id);
 		return bookOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Book with id: %d not found", id)));
@@ -47,40 +41,51 @@ public class BookServiceImpl implements BookService {
 	@Override
 	@Transactional
 	public Book createBook(Book book) {
-		book.setAuthor(checkBookAuthor(book));
-		book.setGenre(checkBookGenre(book));
+		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
+			throw new DataNotPresentException("Author id is not present");
+		}
+		long authorId = book.getAuthor().getId();
+		authorRepository.findById(authorId).ifPresentOrElse(book::setAuthor, () -> {
+			throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
+		});
+
+		if (book.getGenre() == null || book.getGenre().getId() == null) {
+			throw new DataNotPresentException("Genre id is not present");
+		}
+		long genreId = book.getGenre().getId();
+		genreRepository.findById(genreId).ifPresentOrElse(book::setGenre, () -> {
+			throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
+		});
+
 		return bookRepository.save(book);
 	}
 
 	@Override
 	@Transactional
 	public Book updateBook(Book book) {
-		Book toUpdate = getBook(book.getId());
-		toUpdate.setAuthor(checkBookAuthor(book));
-		toUpdate.setGenre(checkBookGenre(book));
+		Book toUpdate = findBookById(book.getId());
+
+		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
+			throw new DataNotPresentException("Author id is not present");
+		}
+		long authorId = book.getAuthor().getId();
+		authorRepository.findById(authorId).ifPresentOrElse(toUpdate::setAuthor, () -> {
+			throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
+		});
+
+		if (book.getGenre() == null || book.getGenre().getId() == null) {
+			throw new DataNotPresentException("Genre id is not present");
+		}
+		long genreId = book.getGenre().getId();
+		genreRepository.findById(genreId).ifPresentOrElse(toUpdate::setGenre, () -> {
+			throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
+		});
+
 		String newBookName = book.getName();
 		if (newBookName != null && !newBookName.isEmpty()) {
 			toUpdate.setName(newBookName);
 		}
 		return bookRepository.save(toUpdate);
-	}
-
-	private Author checkBookAuthor(Book book) {
-		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
-			throw new DataNotPresentException("Author id is not present");
-		}
-		long authorId = book.getAuthor().getId();
-		return authorRepository.findById(authorId).orElseThrow(() -> new DataNotFoundException(
-				String.format("Author with id: %d not found", authorId)));
-	}
-
-	private Genre checkBookGenre(Book book) {
-		if (book.getGenre() == null || book.getGenre().getId() == null) {
-			throw new DataNotPresentException("Genre id is not present");
-		}
-		long genreId = book.getGenre().getId();
-		return genreRepository.findById(genreId).orElseThrow(() -> new DataNotFoundException(
-			String.format("Genre with id: %d not found", genreId)));
 	}
 
 	@Override

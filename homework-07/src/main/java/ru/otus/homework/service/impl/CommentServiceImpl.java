@@ -24,10 +24,6 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional(readOnly = true)
 	public Comment findCommentById(long id) {
-		return getComment(id);
-	}
-
-	private Comment getComment(long id) {
 		Optional<Comment> commentOptional = commentRepository.findById(id);
 		return commentOptional.orElseThrow(
 			() -> new DataNotFoundException(String.format("Comment with id: %d not found", id)));
@@ -52,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional
 	public Comment updateComment(Comment comment) {
-		Comment toUpdate = getComment(comment.getId());
+		Comment toUpdate = findCommentById(comment.getId());
 		String newText = comment.getText();
 		if (newText != null && !newText.isEmpty()) {
 			toUpdate.setText(newText);
