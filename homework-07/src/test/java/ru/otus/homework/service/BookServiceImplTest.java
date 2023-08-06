@@ -47,7 +47,7 @@ class BookServiceImplTest {
 
 	@Test
 	void shouldFindOneBookById() {
-		when(bookRepository.findByIdWithAuthorAndGenre(BOOK_ID)).thenReturn(Optional.of(getDummyBook()));
+		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(getDummyBook()));
 		Book book = bookService.findBookById(BOOK_ID);
 
 		assertThat(book).isNotNull();
@@ -56,28 +56,28 @@ class BookServiceImplTest {
 		assertThat(book.getAuthor().getId()).isEqualTo(AUTHOR_ID);
 		assertThat(book.getGenre().getId()).isEqualTo(GENRE_ID);
 
-		verify(bookRepository, times(1)).findByIdWithAuthorAndGenre(BOOK_ID);
+		verify(bookRepository, times(1)).findById(BOOK_ID);
 	}
 
 	@Test
 	void shouldNotFindBookById() {
-		when(bookRepository.findByIdWithAuthorAndGenre(BOOK_ID)).thenReturn(Optional.empty());
+		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.empty());
 
 		assertThrows(DataNotFoundException.class, () -> bookService.findBookById(BOOK_ID));
 
-		verify(bookRepository, times(1)).findByIdWithAuthorAndGenre(BOOK_ID);
+		verify(bookRepository, times(1)).findById(BOOK_ID);
 	}
 
 	@Test
 	void shouldFindAllBooks() {
-		when(bookRepository.findAllWithAuthorAndGenre()).thenReturn(List.of(getDummyBook()));
+		when(bookRepository.findAll()).thenReturn(List.of(getDummyBook()));
 		List<Book> book = bookService.findAllBooks();
 
 		assertThat(book)
 			.isNotNull()
 			.hasSize(1);
 
-		verify(bookRepository, times(1)).findAllWithAuthorAndGenre();
+		verify(bookRepository, times(1)).findAll();
 	}
 
 	@Test
@@ -101,7 +101,7 @@ class BookServiceImplTest {
 	void shouldUpdateBook() {
 		Book bookToUpdate = getDummyBook();
 		when(bookRepository.save(bookToUpdate)).thenReturn(bookToUpdate);
-		when(bookRepository.findByIdWithAuthorAndGenre(BOOK_ID)).thenReturn(Optional.of(bookToUpdate));
+		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(bookToUpdate));
 		when(authorRepository.findById(AUTHOR_ID)).thenReturn(Optional.of(getDummyAuthor()));
 		when(genreRepository.findById(GENRE_ID)).thenReturn(Optional.of(getDummyGenre()));
 		Book book = bookService.updateBook(bookToUpdate);
@@ -110,7 +110,7 @@ class BookServiceImplTest {
 			.isNotNull()
 			.isEqualTo(bookToUpdate);
 
-		verify(bookRepository, times(1)).findByIdWithAuthorAndGenre(BOOK_ID);
+		verify(bookRepository, times(1)).findById(BOOK_ID);
 		verify(authorRepository, times(1)).findById(AUTHOR_ID);
 		verify(genreRepository, times(1)).findById(GENRE_ID);
 		verify(bookRepository, times(1)).save(bookToUpdate);

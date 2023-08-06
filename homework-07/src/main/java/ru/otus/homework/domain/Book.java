@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,6 +33,13 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "BOOKS")
+@NamedEntityGraph(
+	name = "bookWithGenreAndAuthor",
+	attributeNodes = {
+		@NamedAttributeNode("genre"),
+		@NamedAttributeNode("author")
+	}
+)
 public class Book implements IdEntity {
 
 	@Id

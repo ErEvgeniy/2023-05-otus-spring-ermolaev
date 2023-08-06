@@ -24,7 +24,7 @@ class BookRepositoryImplTest {
 	private TestEntityManager entityManager;
 
 	@Test
-	void shouldFindOneBookByIdWithLazyInitialization() {
+	void shouldFindOneBookById() {
 		SessionFactory sessionFactory = entityManager.getEntityManager()
 			.getEntityManagerFactory()
 			.unwrap(SessionFactory.class);
@@ -38,28 +38,10 @@ class BookRepositoryImplTest {
 		assertThat(actual.get().getName()).isEqualTo(expect.getName());
 		assertThat(actual.get().getAuthor().getFirstname()).isNotNull();
 		assertThat(actual.get().getGenre().getName()).isNotNull();
-		assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(3);
-	}
-
-	@Test
-	void shouldFindOneBookByIdWithFetchedEntities() {
-		SessionFactory sessionFactory = entityManager.getEntityManager()
-			.getEntityManagerFactory()
-			.unwrap(SessionFactory.class);
-		sessionFactory.getStatistics().setStatisticsEnabled(true);
-		sessionFactory.getStatistics().clear();
-
-		Optional<Book> actual = bookRepository.findByIdWithAuthorAndGenre(1L);
-		Book expect = entityManager.find(Book.class, 1L);
-
-		assertThat(actual).isPresent();
-		assertThat(actual.get().getName()).isEqualTo(expect.getName());
-		assertThat(actual.get().getAuthor().getFirstname()).isNotNull();
-		assertThat(actual.get().getGenre().getName()).isNotNull();
 		assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(1);
 	}
 
-	@Test
+	@Test()
 	void shouldNotFindBookById() {
 		Optional<Book> book = bookRepository.findById(10L);
 		assertThat(book).isEmpty();
@@ -67,14 +49,6 @@ class BookRepositoryImplTest {
 
 	@Test
 	void shouldFindAllBooks() {
-		List<Book> books = bookRepository.findAll();
-		assertThat(books)
-			.isNotNull()
-			.hasSize(7);
-	}
-
-	@Test
-	void shouldFindAllBooksWithLazyInitialization() {
 		SessionFactory sessionFactory = entityManager.getEntityManager()
 			.getEntityManagerFactory()
 			.unwrap(SessionFactory.class);
@@ -82,23 +56,6 @@ class BookRepositoryImplTest {
 		sessionFactory.getStatistics().clear();
 
 		List<Book> books = bookRepository.findAll();
-		assertThat(books)
-			.isNotNull()
-			.hasSize(7);
-		assertThat(books.get(0).getAuthor().getFirstname()).isNotNull();
-		assertThat(books.get(0).getGenre().getName()).isNotNull();
-		assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(3);
-	}
-
-	@Test
-	void shouldFindAllBooksWithFetchedEntities() {
-		SessionFactory sessionFactory = entityManager.getEntityManager()
-			.getEntityManagerFactory()
-			.unwrap(SessionFactory.class);
-		sessionFactory.getStatistics().setStatisticsEnabled(true);
-		sessionFactory.getStatistics().clear();
-
-		List<Book> books = bookRepository.findAllWithAuthorAndGenre();
 		assertThat(books)
 			.isNotNull()
 			.hasSize(7);
