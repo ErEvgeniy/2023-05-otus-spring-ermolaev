@@ -58,8 +58,9 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Book updateBook(Book book) {
-		Book toUpdate = findBookById(book.getId());
-
+		Book toUpdate = bookRepository.findById(book.getId()).orElseThrow(
+			() -> new DataNotFoundException(
+				String.format("Book with id: %s not found", book.getId())));
 		if (book.getAuthor() != null && book.getAuthor().getId() != null) {
 			String authorId = book.getAuthor().getId();
 			authorRepository.findById(authorId).ifPresentOrElse(toUpdate::setAuthor, () -> {
@@ -78,7 +79,6 @@ public class BookServiceImpl implements BookService {
 		if (newBookName != null && !newBookName.isEmpty()) {
 			toUpdate.setName(newBookName);
 		}
-
 		return bookRepository.save(toUpdate);
 	}
 

@@ -35,7 +35,9 @@ public class GenreServiceImpl implements GenreService {
 
 	@Override
 	public Genre updateGenre(Genre genre) {
-		Genre toUpdate = findGenreById(genre.getId());
+		Genre toUpdate = genreRepository.findById(genre.getId()).orElseThrow(
+			() -> new DataNotFoundException(
+				String.format("Genre with id: %s not found", genre.getId())));
 		String newGenreName = genre.getName();
 		if (newGenreName != null && !newGenreName.isEmpty()) {
 			toUpdate.setName(newGenreName);

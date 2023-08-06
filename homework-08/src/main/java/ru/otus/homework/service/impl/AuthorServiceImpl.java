@@ -35,7 +35,9 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public Author updateAuthor(Author author) {
-		Author toUpdate = findAuthorById(author.getId());
+		Author toUpdate = authorRepository.findById(author.getId()).orElseThrow(
+			() -> new DataNotFoundException(
+				String.format("Author with id: %s not found", author.getId())));
 		String newFirstname = author.getFirstname();
 		if (newFirstname != null && !newFirstname.isEmpty()) {
 			toUpdate.setFirstname(newFirstname);
