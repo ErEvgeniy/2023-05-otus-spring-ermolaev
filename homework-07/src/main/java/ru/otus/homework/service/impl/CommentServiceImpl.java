@@ -48,7 +48,9 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional
 	public Comment updateComment(Comment comment) {
-		Comment toUpdate = findCommentById(comment.getId());
+		Comment toUpdate = commentRepository.findById(comment.getId()).orElseThrow(
+			() -> new DataNotFoundException(
+				String.format("Comment with id: %d not found", comment.getId())));
 		String newText = comment.getText();
 		if (newText != null && !newText.isEmpty()) {
 			toUpdate.setText(newText);

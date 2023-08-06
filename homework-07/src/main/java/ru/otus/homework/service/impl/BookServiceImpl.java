@@ -63,8 +63,9 @@ public class BookServiceImpl implements BookService {
 	@Override
 	@Transactional
 	public Book updateBook(Book book) {
-		Book toUpdate = findBookById(book.getId());
-
+		Book toUpdate = bookRepository.findById(book.getId()).orElseThrow(
+			() -> new DataNotFoundException(
+				String.format("Book with id: %s not found", book.getId())));
 		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
 			throw new DataNotPresentException("Author id is not present");
 		}
@@ -72,7 +73,6 @@ public class BookServiceImpl implements BookService {
 		authorRepository.findById(authorId).ifPresentOrElse(toUpdate::setAuthor, () -> {
 			throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
 		});
-
 		if (book.getGenre() == null || book.getGenre().getId() == null) {
 			throw new DataNotPresentException("Genre id is not present");
 		}
@@ -80,7 +80,6 @@ public class BookServiceImpl implements BookService {
 		genreRepository.findById(genreId).ifPresentOrElse(toUpdate::setGenre, () -> {
 			throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
 		});
-
 		String newBookName = book.getName();
 		if (newBookName != null && !newBookName.isEmpty()) {
 			toUpdate.setName(newBookName);
