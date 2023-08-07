@@ -11,7 +11,7 @@ import ru.otus.homework.repository.BookRepository;
 
 @Component
 @RequiredArgsConstructor
-public class MongoAuthorCascadeDeleteEventsListener extends AbstractMongoEventListener<Author> {
+public class MongoAuthorEventsListener extends AbstractMongoEventListener<Author> {
 
 	private final BookRepository bookRepository;
 

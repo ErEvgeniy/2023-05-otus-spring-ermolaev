@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
-import ru.otus.homework.domain.Comment;
 import ru.otus.homework.domain.Genre;
 
 import java.util.List;
@@ -17,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BookRepositoryImplTest {
 
 	private static final String BOOK_NAME = "Test";
+
 	@Autowired
 	private BookRepository bookRepository;
 
@@ -105,77 +105,22 @@ class BookRepositoryImplTest {
 		assertThat(afterDelete).isEmpty();
 	}
 
-
-
-
-
-
 	@Test
-	void shouldFindBookCommentById() {
-		List<Comment> comments = bookRepository.findAllComments();
-		Comment expect = comments.get(0);
+	void shouldExistBookByAuthorId() {
+		Author author = authorRepository.findAll().get(0);
 
-		Optional<Comment> actual = bookRepository.findCommentById(expect.getId());
+		boolean result = bookRepository.existsBookByAuthorId(author.getId());
 
-		assertThat(actual).isPresent();
-		assertThat(actual.get().getText()).isEqualTo(expect.getText());
+		assertThat(result).isTrue();
 	}
 
 	@Test
-	void shouldFindCommentsByBookId() {
-		Book book = bookRepository.findAll().get(0);
+	void shouldExistBookByGenreId() {
+		Genre genre = genreRepository.findAll().get(0);
 
-		List<Comment> comments = bookRepository.findCommentsByBookId(book.getId());
+		boolean result = bookRepository.existsBookByGenreId(genre.getId());
 
-		assertThat(comments)
-			.isNotNull()
-			.isNotEmpty();
-	}
-
-	@Test
-	void shouldFindAllComments() {
-		List<Comment> comments = bookRepository.findAllComments();
-
-		assertThat(comments)
-			.isNotNull()
-			.isNotEmpty();
-	}
-
-	@Test
-	void shouldDeleteCommentById() {
-		Comment comment = bookRepository.findAllComments().get(1);
-
-		Optional<Comment> beforeDelete = bookRepository.findCommentById(comment.getId());
-		bookRepository.deleteCommentById(comment.getId());
-		Optional<Comment> afterDelete = bookRepository.findCommentById(comment.getId());
-
-		assertThat(beforeDelete).isNotEmpty();
-		assertThat(afterDelete).isEmpty();
-	}
-
-	@Test
-	void shouldSaveComment() {
-		Book book = bookRepository.findAll().get(0);
-
-		List<Comment> beforeCreate = bookRepository.findCommentsByBookId(book.getId());
-		bookRepository.saveComment(new Comment(null, "test"), book);
-		List<Comment> afterCreate = bookRepository.findCommentsByBookId(book.getId());
-
-
-		assertThat(beforeCreate)
-			.isNotEmpty();
-		assertThat(afterCreate)
-			.isNotEmpty()
-			.hasSize(beforeCreate.size() + 1);
-	}
-
-	@Test
-	void shouldFindBookByCommentId() {
-		Comment comment = bookRepository.findAllComments().get(0);
-
-		Optional<Book> book = bookRepository.findBookByCommentId(comment.getId());
-
-		assertThat(book).isNotEmpty();
+		assertThat(result).isTrue();
 	}
 
 }
