@@ -55,7 +55,8 @@ public class BookServiceImpl implements BookService {
 		long authorId = bookDto.getAuthor().getId();
 		authorRepository.findById(authorId)
 			.ifPresentOrElse(newBook::setAuthor, () -> {
-				throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
+				throw new DataNotFoundException(String.format("Author with id: %d not found",
+					authorId));
 			});
 
 		if (bookDto.getGenre() == null || bookDto.getGenre().getId() == null) {
@@ -64,7 +65,8 @@ public class BookServiceImpl implements BookService {
 		long genreId = bookDto.getGenre().getId();
 		genreRepository.findById(genreId)
 			.ifPresentOrElse(newBook::setGenre, () -> {
-				throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
+				throw new DataNotFoundException(String.format("Genre with id: %d not found",
+					genreId));
 			});
 
 		bookRepository.save(newBook);
@@ -95,7 +97,6 @@ public class BookServiceImpl implements BookService {
 		if (newBookName != null && !newBookName.isEmpty()) {
 			toUpdate.setName(newBookName);
 		}
-
 		bookRepository.save(toUpdate);
 		return bookMapper.toDto(toUpdate);
 	}
