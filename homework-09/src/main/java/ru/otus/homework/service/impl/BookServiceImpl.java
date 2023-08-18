@@ -3,7 +3,9 @@ package ru.otus.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.exception.DataNotPresentException;
+import ru.otus.homework.mapper.BookMapper;
 import ru.otus.homework.repository.AuthorRepository;
 import ru.otus.homework.repository.BookRepository;
 import ru.otus.homework.domain.Book;
@@ -24,67 +26,78 @@ public class BookServiceImpl implements BookService {
 
 	private final GenreRepository genreRepository;
 
+	private final BookMapper bookMapper;
+
 	@Override
 	@Transactional(readOnly = true)
-	public Book findBookById(long id) {
+	public BookDto findBookById(long id) {
 		Optional<Book> bookOptional = bookRepository.findById(id);
-		return bookOptional.orElseThrow(
-			() -> new DataNotFoundException(String.format("Book with id: %d not found", id)));
+		if (bookOptional.isEmpty()) {
+			throw new DataNotFoundException(String.format("Book with id: %d not found", id));
+		}
+		return bookMapper.toDto(bookOptional.get());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<Book> findAllBooks() {
-		return bookRepository.findAll();
+	public List<BookDto> findAllBooks() {
+		List<Book> books = bookRepository.findAll();
+		return bookMapper.toDtoList(books);
 	}
 
 	@Override
 	@Transactional
-	public Book createBook(Book book) {
-		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
+	public BookDto createBook(BookDto bookDto) {
+		Book newBook = bookMapper.toDomain(bookDto);
+		if (bookDto.getAuthor() == null || bookDto.getAuthor().getId() == null) {
 			throw new DataNotPresentException("Author id is not present");
 		}
-		long authorId = book.getAuthor().getId();
-		authorRepository.findById(authorId).ifPresentOrElse(book::setAuthor, () -> {
-			throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
-		});
+		long authorId = bookDto.getAuthor().getId();
+		authorRepository.findById(authorId)
+			.ifPresentOrElse(newBook::setAuthor, () -> {
+				throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
+			});
 
-		if (book.getGenre() == null || book.getGenre().getId() == null) {
+		if (bookDto.getGenre() == null || bookDto.getGenre().getId() == null) {
 			throw new DataNotPresentException("Genre id is not present");
 		}
-		long genreId = book.getGenre().getId();
-		genreRepository.findById(genreId).ifPresentOrElse(book::setGenre, () -> {
-			throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
-		});
+		long genreId = bookDto.getGenre().getId();
+		genreRepository.findById(genreId)
+			.ifPresentOrElse(newBook::setGenre, () -> {
+				throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
+			});
 
-		return bookRepository.save(book);
+		bookRepository.save(newBook);
+		return bookMapper.toDto(newBook);
 	}
 
 	@Override
 	@Transactional
-	public Book updateBook(Book book) {
-		Book toUpdate = bookRepository.findById(book.getId()).orElseThrow(
+	public BookDto updateBook(BookDto bookDto) {
+		Book toUpdate = bookRepository.findById(bookDto.getId()).orElseThrow(
 			() -> new DataNotFoundException(
-				String.format("Book with id: %s not found", book.getId())));
-		if (book.getAuthor() == null || book.getAuthor().getId() == null) {
+				String.format("Book with id: %s not found", bookDto.getId())));
+		if (bookDto.getAuthor() == null || bookDto.getAuthor().getId() == null) {
 			throw new DataNotPresentException("Author id is not present");
 		}
-		long authorId = book.getAuthor().getId();
+		long authorId = bookDto.getAuthor().getId();
 		authorRepository.findById(authorId).ifPresentOrElse(toUpdate::setAuthor, () -> {
 			throw new DataNotFoundException(String.format("Author with id: %d not found", authorId));
 		});
-		if (book.getGenre() == null || book.getGenre().getId() == null) {
+		if (bookDto.getGenre() == null || bookDto.getGenre().getId() == null) {
 			throw new DataNotPresentException("Genre id is not present");
 		}
-		long genreId = book.getGenre().getId();
+		long genreId = bookDto.getGenre().getId();
 		genreRepository.findById(genreId).ifPresentOrElse(toUpdate::setGenre, () -> {
 			throw new DataNotFoundException(String.format("Genre with id: %d not found", genreId));
 		});
-		String newBookName = book.getName();
+		String newBookName = bookDto.getName();
 		if (newBookName != null && !newBookName.isEmpty()) {
 			toUpdate.setName(newBookName);
 		}
-		return bookRepository.save(toUpdate);
+
+		bookRepository.save(toUpdate);
+		return bookMapper.toDto(toUpdate);
 	}
 
 	@Override

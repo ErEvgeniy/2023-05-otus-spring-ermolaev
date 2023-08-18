@@ -7,7 +7,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Genre;
+import ru.otus.homework.dto.AuthorDto;
+import ru.otus.homework.dto.BookDto;
+import ru.otus.homework.dto.GenreDto;
 import ru.otus.homework.exception.DataNotFoundException;
+import ru.otus.homework.mapper.BookMapper;
 import ru.otus.homework.repository.AuthorRepository;
 import ru.otus.homework.repository.BookRepository;
 import ru.otus.homework.repository.GenreRepository;
@@ -42,13 +46,19 @@ class BookServiceImplTest {
 	@MockBean
 	private GenreRepository genreRepository;
 
+	@MockBean
+	private BookMapper bookMapper;
+
 	@Autowired
 	private BookServiceImpl bookService;
 
 	@Test
 	void shouldFindOneBookById() {
-		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(getDummyBook()));
-		Book book = bookService.findBookById(BOOK_ID);
+		Book dummyBook = getDummyBook();
+		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(dummyBook));
+		when(bookMapper.toDto(dummyBook)).thenReturn(getDummyDtoBook());
+
+		BookDto book = bookService.findBookById(BOOK_ID);
 
 		assertThat(book).isNotNull();
 		assertThat(book.getId()).isEqualTo(BOOK_ID);
@@ -57,6 +67,7 @@ class BookServiceImplTest {
 		assertThat(book.getGenre().getId()).isEqualTo(GENRE_ID);
 
 		verify(bookRepository, times(1)).findById(BOOK_ID);
+		verify(bookMapper, times(1)).toDto(dummyBook);
 	}
 
 	@Test
@@ -70,50 +81,64 @@ class BookServiceImplTest {
 
 	@Test
 	void shouldFindAllBooks() {
-		when(bookRepository.findAll()).thenReturn(List.of(getDummyBook()));
-		List<Book> book = bookService.findAllBooks();
+		List<Book> dummyBooks = List.of(getDummyBook());
+		when(bookRepository.findAll()).thenReturn(dummyBooks);
+		when(bookMapper.toDtoList(dummyBooks)).thenReturn(List.of(getDummyDtoBook()));
+
+
+		List<BookDto> book = bookService.findAllBooks();
 
 		assertThat(book)
 			.isNotNull()
 			.hasSize(1);
 
 		verify(bookRepository, times(1)).findAll();
+		verify(bookMapper, times(1)).toDtoList(dummyBooks);
 	}
 
 	@Test
 	void shouldCreateBook() {
 		Book bookToCreate = getDummyBook();
+		BookDto dummyDto = getDummyDtoBook();
+		when(bookMapper.toDomain(dummyDto)).thenReturn(bookToCreate);
 		when(bookRepository.save(bookToCreate)).thenReturn(bookToCreate);
 		when(authorRepository.findById(AUTHOR_ID)).thenReturn(Optional.of(getDummyAuthor()));
 		when(genreRepository.findById(GENRE_ID)).thenReturn(Optional.of(getDummyGenre()));
-		Book book = bookService.createBook(bookToCreate);
+		when(bookMapper.toDto(bookToCreate)).thenReturn(dummyDto);
+		BookDto book = bookService.createBook(dummyDto);
 
 		assertThat(book)
 			.isNotNull()
-			.isEqualTo(bookToCreate);
+			.isEqualTo(dummyDto);
 
 		verify(authorRepository, times(1)).findById(AUTHOR_ID);
 		verify(genreRepository, times(1)).findById(GENRE_ID);
 		verify(bookRepository, times(1)).save(bookToCreate);
+		verify(bookMapper, times(1)).toDomain(dummyDto);
+		verify(bookMapper, times(1)).toDto(bookToCreate);
 	}
 
 	@Test
 	void shouldUpdateBook() {
 		Book bookToUpdate = getDummyBook();
+		BookDto dummyDto = getDummyDtoBook();
+
 		when(bookRepository.save(bookToUpdate)).thenReturn(bookToUpdate);
 		when(bookRepository.findById(BOOK_ID)).thenReturn(Optional.of(bookToUpdate));
 		when(authorRepository.findById(AUTHOR_ID)).thenReturn(Optional.of(getDummyAuthor()));
 		when(genreRepository.findById(GENRE_ID)).thenReturn(Optional.of(getDummyGenre()));
-		Book book = bookService.updateBook(bookToUpdate);
+		when(bookMapper.toDto(bookToUpdate)).thenReturn(dummyDto);
+		BookDto book = bookService.updateBook(dummyDto);
 
 		assertThat(book)
 			.isNotNull()
-			.isEqualTo(bookToUpdate);
+			.isEqualTo(dummyDto);
 
 		verify(bookRepository, times(1)).findById(BOOK_ID);
 		verify(authorRepository, times(1)).findById(AUTHOR_ID);
 		verify(genreRepository, times(1)).findById(GENRE_ID);
 		verify(bookRepository, times(1)).save(bookToUpdate);
+		verify(bookMapper, times(1)).toDto(bookToUpdate);
 	}
 
 	private Book getDummyBook() {
@@ -139,4 +164,29 @@ class BookServiceImplTest {
 			.id(GENRE_ID)
 			.build();
 	}
+
+	private BookDto getDummyDtoBook() {
+		AuthorDto author = getDummyDtoAuthor();
+		GenreDto genre = getDummyDtoGenre();
+
+		BookDto bookDto = new BookDto();
+		bookDto.setId(BOOK_ID);
+		bookDto.setName(BOOK_NAME);
+		bookDto.setAuthor(author);
+		bookDto.setGenre(genre);
+		return bookDto;
+	}
+
+	private AuthorDto getDummyDtoAuthor() {
+		AuthorDto authorDto = new AuthorDto();
+		authorDto.setId(AUTHOR_ID);
+		return authorDto;
+	}
+
+	private GenreDto getDummyDtoGenre() {
+		GenreDto genreDto = new GenreDto();
+		genreDto.setId(GENRE_ID);
+		return genreDto;
+	}
+
 }
