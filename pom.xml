@@ -25,6 +25,7 @@
     <module>homework-06</module>
     <module>homework-07</module>
     <module>homework-08</module>
+    <module>homework-09</module>
 	</modules>
 
 	<properties>
@@ -38,6 +39,9 @@
 		<spring.shell.version>3.1.2</spring.shell.version>
 		<mongock.version>4.3.8</mongock.version>
 		<flapdoodle.version>4.7.0</flapdoodle.version>
+		<h2.version>2.2.220</h2.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<lombok.version>1.18.28</lombok.version>
 	</properties>
 
 	<dependencyManagement>
@@ -72,6 +76,16 @@
 				<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
 				<version>${flapdoodle.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -79,6 +93,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -124,6 +139,7 @@
 					<configLocation>${checkstyle.config.url}</configLocation>
 					<includeResources>false</includeResources>
 					<includeTestResources>false</includeTestResources>
+					<excludes>**/ru/otus/homework/mapper/**</excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -132,6 +148,33 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>0.2.0</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
