@@ -1,5 +1,6 @@
 package ru.otus.homework.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +28,13 @@ public class AuthorController {
 	}
 
 	@PostMapping("/author")
-	public void authorCreate(@RequestBody AuthorDto authorDto) {
+	public void authorCreate(@Valid @RequestBody AuthorDto authorDto) {
 		authorService.createAuthor(authorDto);
 	}
 
-	@PatchMapping("/author")
-	public void authorUpdate(@RequestBody AuthorDto authorDto) {
+	@PatchMapping("/author/{id}")
+	public void authorUpdate(@PathVariable long id, @Valid @RequestBody AuthorDto authorDto) {
+		authorDto.setId(id);
 		authorService.updateAuthor(authorDto);
 	}
 

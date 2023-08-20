@@ -1,5 +1,6 @@
 package ru.otus.homework.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +28,13 @@ public class GenreController {
 	}
 
 	@PostMapping("/genre")
-	public void genreCreate(@RequestBody GenreDto genreDto) {
+	public void genreCreate(@Valid @RequestBody GenreDto genreDto) {
 		genreService.createGenre(genreDto);
 	}
 
-	@PatchMapping("/genre")
-	public void genreUpdate(@RequestBody GenreDto genreDto) {
+	@PatchMapping("/genre/{id}")
+	public void genreUpdate(@PathVariable long id, @Valid @RequestBody GenreDto genreDto) {
+		genreDto.setId(id);
 		genreService.updateGenre(genreDto);
 	}
 

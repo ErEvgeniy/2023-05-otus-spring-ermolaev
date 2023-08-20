@@ -1,5 +1,7 @@
 package ru.otus.homework.rest.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,10 @@ public class CommentDto {
 
 	private Long id;
 
+	@NotBlank
 	private String text;
+
+	@NotNull
+	private Long bookId;
 
 }

@@ -12,7 +12,7 @@ public interface CommentService {
 
 	List<CommentDto> findAllCommentsByBookId(Long bookId);
 
-	CommentDto createComment(CommentDto comment, Long bookId);
+	CommentDto createComment(CommentDto comment);
 
 	CommentDto updateComment(CommentDto comment);
 

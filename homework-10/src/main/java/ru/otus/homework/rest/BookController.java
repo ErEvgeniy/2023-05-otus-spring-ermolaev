@@ -1,5 +1,6 @@
 package ru.otus.homework.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +28,13 @@ public class BookController {
 	}
 
 	@PostMapping("/book")
-	public void bookCreate(@RequestBody BookDto bookDto) {
+	public void bookCreate(@Valid @RequestBody BookDto bookDto) {
 		bookService.createBook(bookDto);
 	}
 
-	@PatchMapping("/book")
-	public void bookUpdate(@RequestBody BookDto bookDto) {
+	@PatchMapping("/book/{id}")
+	public void bookUpdate(@PathVariable long id, @Valid @RequestBody BookDto bookDto) {
+		bookDto.setId(id);
 		bookService.updateBook(bookDto);
 	}
 

@@ -51,11 +51,12 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	@Transactional
-	public CommentDto createComment(CommentDto commentDto, Long bookId) {
+	public CommentDto createComment(CommentDto commentDto) {
 		Comment newComment = commentMapper.toDomain(commentDto);
-		Optional<Book> book = bookRepository.findById(bookId);
+		Optional<Book> book = bookRepository.findById(commentDto.getBookId());
 		book.ifPresentOrElse(newComment::setBook, () -> {
-			throw new DataNotFoundException(String.format("Book with id: %d not found", bookId));
+			throw new DataNotFoundException(String.format("Book with id: %d not found",
+				commentDto.getBookId()));
 		});
 
 		commentRepository.save(newComment);

@@ -1,5 +1,6 @@
 package ru.otus.homework.rest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.homework.rest.dto.CommentDto;
 import ru.otus.homework.service.CommentService;
@@ -28,17 +28,18 @@ public class CommentController {
 	}
 
 	@PostMapping("/comment")
-	public void bookCreate(@RequestBody CommentDto commentDto, @RequestParam long bookId) {
-		commentService.createComment(commentDto, bookId);
+	public void commentCreate(@Valid @RequestBody CommentDto commentDto) {
+		commentService.createComment(commentDto);
 	}
 
-	@PatchMapping("/comment")
-	public void bookUpdate(@RequestBody CommentDto commentDto) {
+	@PatchMapping("/comment/{id}")
+	public void commentUpdate(@PathVariable long id, @Valid @RequestBody CommentDto commentDto) {
+		commentDto.setId(id);
 		commentService.updateComment(commentDto);
 	}
 
 	@DeleteMapping("/comment/{id}")
-	public void bookDelete(@PathVariable long id) {
+	public void commentDelete(@PathVariable long id) {
 		commentService.deleteCommentById(id);
 	}
 

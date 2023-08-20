@@ -80,7 +80,7 @@ class BookControllerTest {
 
 		when(bookService.updateBook(dummyDtoBook)).thenReturn(dummyDtoBook);
 
-		mvc.perform(patch("/library/v1/book")
+		mvc.perform(patch("/library/v1/book/{id}", dummyDtoBook.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(bookJson))
 			.andExpect(status().isOk());
