@@ -21,12 +21,13 @@
 		<module>homework-02</module>
 		<module>homework-03</module>
 		<module>homework-04</module>
-    <module>homework-05</module>
-    <module>homework-06</module>
-    <module>homework-07</module>
-    <module>homework-08</module>
-    <module>homework-09</module>
-    <module>homework-10</module>
+		<module>homework-05</module>
+		<module>homework-06</module>
+		<module>homework-07</module>
+		<module>homework-08</module>
+		<module>homework-09</module>
+		<module>homework-10</module>
+		<module>homework-11</module>
 	</modules>
 
 	<properties>
