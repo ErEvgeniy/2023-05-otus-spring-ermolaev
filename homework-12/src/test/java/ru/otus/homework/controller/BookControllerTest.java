@@ -103,6 +103,24 @@ class BookControllerTest {
 		verify(genreService, times(1)).findAllGenres();
 	}
 
+	@Test
+	public void shouldBeUnauthorizedForBookListEndpoint() throws Exception {
+		mvc.perform(get("/book/list"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	public void shouldBeUnauthorizedForBookEditEndpoint() throws Exception {
+		mvc.perform(get("/book").param("id", "1"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	public void shouldBeUnauthorizedForBookCreateaEndpoint() throws Exception {
+		mvc.perform(get("/book/create"))
+				.andExpect(status().isUnauthorized());
+	}
+
 	private List<BookDto> getDummyDtoBooks() {
 		return List.of(
 				new BookDto(1L, "Evgeniy Onegin", getDummyDtoGenres().get(0), getDummyDtoAuthors().get(0)),
