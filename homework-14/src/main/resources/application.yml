@@ -1,0 +1,49 @@
+spring:
+  main:
+    allow-circular-references: true
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+  shell:
+    interactive:
+      enabled: true
+    noninteractive:
+      enabled: false
+
+    command:
+      version:
+        enabled: false
+
+  data:
+    mongodb:
+      port: 27017
+      database: library
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/otus
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: root
+
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  sql:
+    init:
+      mode: always
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.homework.mongock.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
