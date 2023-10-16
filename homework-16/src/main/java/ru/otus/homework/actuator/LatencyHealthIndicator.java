@@ -17,7 +17,6 @@ public class LatencyHealthIndicator implements HealthIndicator {
     @Override
     public Health health() {
         long start = System.currentTimeMillis();
-
         try {
             jdbcTemplate.execute("SELECT 1");
             long latency = System.currentTimeMillis() - start;
