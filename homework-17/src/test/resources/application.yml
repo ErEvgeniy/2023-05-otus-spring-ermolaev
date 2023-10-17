@@ -1,0 +1,31 @@
+spring:
+    data:
+        mongodb:
+            port: 0
+            database: library
+    shell:
+        interactive:
+            enabled: false
+        script:
+            spring:
+                shell:
+                    script: false
+
+mongock:
+    runner-type: "InitializingBean"
+    change-logs-scan-package:
+        - ru.otus.homework.mongock.changelog
+    mongo-db:
+        write-concern:
+            journal: false
+        read-concern: local
+
+de:
+    flapdoodle:
+        mongodb:
+            embedded:
+                version: 4.0.2
+
+logging:
+    level:
+        root: ERROR

@@ -1,0 +1,23 @@
+version: '3'
+services:
+  app:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATA_MONGODB_HOST=database
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=library
+    ports:
+      - 8080:8080
+    container_name: 'homework-17-app'
+    depends_on:
+      - database
+
+  database:
+    image: mongo
+    restart: on-failure
+    container_name: 'homework-17-database'
+    ports:
+      - 27017:27017
