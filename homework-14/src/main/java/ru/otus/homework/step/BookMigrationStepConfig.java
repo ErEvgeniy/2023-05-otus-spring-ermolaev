@@ -44,7 +44,7 @@ public class BookMigrationStepConfig {
     public JdbcBatchItemWriter<Book> bookInsertTempTable() {
         JdbcBatchItemWriter<Book> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql("INSERT INTO temp_cross_ids(id_mongo, id_postgres) " +
+        writer.setSql("INSERT INTO temp_book_cross_ids(id_mongo, id_postgres) " +
                 "VALUES (:id, nextval('books_book_id_seq'))");
         writer.setDataSource(dataSource);
         return writer;
@@ -61,9 +61,9 @@ public class BookMigrationStepConfig {
         });
         writer.setSql("INSERT INTO books(name, book_id, genre_id, author_id) " +
                 "VALUES (?, " +
-                "(SELECT id_postgres FROM temp_cross_ids WHERE id_mongo = ?), " +
-                "(SELECT id_postgres FROM temp_cross_ids WHERE id_mongo = ?), " +
-                "(SELECT id_postgres FROM temp_cross_ids WHERE id_mongo = ?))");
+                "(SELECT id_postgres FROM temp_book_cross_ids WHERE id_mongo = ?), " +
+                "(SELECT id_postgres FROM temp_genre_cross_ids WHERE id_mongo = ?), " +
+                "(SELECT id_postgres FROM temp_author_cross_ids WHERE id_mongo = ?))");
         writer.setDataSource(dataSource);
         return writer;
     }

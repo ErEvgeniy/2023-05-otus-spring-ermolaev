@@ -44,7 +44,7 @@ public class GenreMigrationStepConfig {
     public JdbcBatchItemWriter<Genre> genreInsertTempTable() {
         JdbcBatchItemWriter<Genre> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql("INSERT INTO temp_cross_ids(id_mongo, id_postgres) " +
+        writer.setSql("INSERT INTO temp_genre_cross_ids(id_mongo, id_postgres) " +
                 "VALUES (:id, nextval('genres_genre_id_seq'))");
         writer.setDataSource(dataSource);
         return writer;
@@ -55,7 +55,7 @@ public class GenreMigrationStepConfig {
         JdbcBatchItemWriter<Genre> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql("INSERT INTO genres(genre_id, name) " +
-                "VALUES ((SELECT id_postgres FROM temp_cross_ids WHERE id_mongo = :id), :name)");
+                "VALUES ((SELECT id_postgres FROM temp_genre_cross_ids WHERE id_mongo = :id), :name)");
         writer.setDataSource(dataSource);
         return writer;
     }

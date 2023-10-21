@@ -44,7 +44,7 @@ public class AuthorMigrationStepConfig {
     public JdbcBatchItemWriter<Author> authorInsertTempTable() {
         JdbcBatchItemWriter<Author> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql("INSERT INTO temp_cross_ids(id_mongo, id_postgres) " +
+        writer.setSql("INSERT INTO temp_author_cross_ids(id_mongo, id_postgres) " +
                 "VALUES (:id, nextval('authors_author_id_seq'))");
         writer.setDataSource(dataSource);
         return writer;
@@ -55,7 +55,7 @@ public class AuthorMigrationStepConfig {
         JdbcBatchItemWriter<Author> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql("INSERT INTO authors(author_id, firstname, patronymic, lastname) " +
-                "VALUES ((SELECT id_postgres FROM temp_cross_ids WHERE id_mongo = :id), " +
+                "VALUES ((SELECT id_postgres FROM temp_author_cross_ids WHERE id_mongo = :id), " +
                 ":firstname, :patronymic, :lastname)");
         writer.setDataSource(dataSource);
         return writer;

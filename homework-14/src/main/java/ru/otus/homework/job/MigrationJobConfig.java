@@ -28,21 +28,26 @@ public class MigrationJobConfig {
     @Bean
     public Job migrationJob(Step authorMigrationStep, Step genreMigrationStep, Step bookMigrationStep) {
         return new JobBuilder("migrationJob", jobRepository)
-                .start(createTempCrossIdTable(jobRepository))
+                .start(createTempAuthorCrossIdTable(jobRepository))
+                .next(createTempGenreCrossIdTable(jobRepository))
+                .next(createTempBookCrossIdTable(jobRepository))
                 .next(authorMigrationStep)
                 .next(genreMigrationStep)
                 .next(bookMigrationStep)
-                .next(dropTempCrossIdTable(jobRepository))
+                .next(dropTempAuthorCrossIdTable(jobRepository))
+                .next(dropTempGenreCrossIdTable(jobRepository))
+                .next(dropTempBookCrossIdTable(jobRepository))
                 .build();
     }
 
     @Bean
-    public TaskletStep createTempCrossIdTable(JobRepository jobRepository) {
-        return new StepBuilder("createTempCrossIdTable", jobRepository)
+    public TaskletStep createTempAuthorCrossIdTable(JobRepository jobRepository) {
+        return new StepBuilder("createTempAuthorCrossIdTable", jobRepository)
                 .allowStartIfComplete(true)
                 .tasklet(((contribution, chunkContext) -> {
                     new JdbcTemplate(dataSource).execute(
-                            "CREATE TABLE temp_cross_ids (id_mongo VARCHAR(255) NOT NULL, id_postgres INT NOT NULL)"
+                            "CREATE TABLE temp_author_cross_ids" +
+                                    " (id_mongo VARCHAR(255) NOT NULL, id_postgres INT NOT NULL)"
                     );
                     return RepeatStatus.FINISHED;
                 }), platformTransactionManager)
@@ -50,11 +55,61 @@ public class MigrationJobConfig {
     }
 
     @Bean
-    public TaskletStep dropTempCrossIdTable(JobRepository jobRepository) {
+    public TaskletStep createTempGenreCrossIdTable(JobRepository jobRepository) {
+        return new StepBuilder("createTempGenreCrossIdTable", jobRepository)
+                .allowStartIfComplete(true)
+                .tasklet(((contribution, chunkContext) -> {
+                    new JdbcTemplate(dataSource).execute(
+                            "CREATE TABLE temp_genre_cross_ids" +
+                                    " (id_mongo VARCHAR(255) NOT NULL, id_postgres INT NOT NULL)"
+                    );
+                    return RepeatStatus.FINISHED;
+                }), platformTransactionManager)
+                .build();
+    }
+
+    @Bean
+    public TaskletStep createTempBookCrossIdTable(JobRepository jobRepository) {
+        return new StepBuilder("createTempBookCrossIdTable", jobRepository)
+                .allowStartIfComplete(true)
+                .tasklet(((contribution, chunkContext) -> {
+                    new JdbcTemplate(dataSource).execute(
+                            "CREATE TABLE temp_book_cross_ids" +
+                                    " (id_mongo VARCHAR(255) NOT NULL, id_postgres INT NOT NULL)"
+                    );
+                    return RepeatStatus.FINISHED;
+                }), platformTransactionManager)
+                .build();
+    }
+
+    @Bean
+    public TaskletStep dropTempAuthorCrossIdTable(JobRepository jobRepository) {
         return new StepBuilder("dropTempCrossIdTable", jobRepository)
                 .allowStartIfComplete(true)
                 .tasklet(((contribution, chunkContext) -> {
-                    new JdbcTemplate(dataSource).execute("DROP TABLE temp_cross_ids");
+                    new JdbcTemplate(dataSource).execute("DROP TABLE temp_author_cross_ids");
+                    return RepeatStatus.FINISHED;
+                }), platformTransactionManager)
+                .build();
+    }
+
+    @Bean
+    public TaskletStep dropTempGenreCrossIdTable(JobRepository jobRepository) {
+        return new StepBuilder("dropTempCrossIdTable", jobRepository)
+                .allowStartIfComplete(true)
+                .tasklet(((contribution, chunkContext) -> {
+                    new JdbcTemplate(dataSource).execute("DROP TABLE temp_genre_cross_ids");
+                    return RepeatStatus.FINISHED;
+                }), platformTransactionManager)
+                .build();
+    }
+
+    @Bean
+    public TaskletStep dropTempBookCrossIdTable(JobRepository jobRepository) {
+        return new StepBuilder("dropTempCrossIdTable", jobRepository)
+                .allowStartIfComplete(true)
+                .tasklet(((contribution, chunkContext) -> {
+                    new JdbcTemplate(dataSource).execute("DROP TABLE temp_book_cross_ids");
                     return RepeatStatus.FINISHED;
                 }), platformTransactionManager)
                 .build();
