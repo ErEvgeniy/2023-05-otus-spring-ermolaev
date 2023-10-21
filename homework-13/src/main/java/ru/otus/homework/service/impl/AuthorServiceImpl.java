@@ -24,7 +24,8 @@ public class AuthorServiceImpl implements AuthorService {
 	@Transactional(readOnly = true)
 	public AuthorDto findAuthorById(long id) {
 		Author author = authorRepository.findById(id)
-				.orElseThrow(() -> new DataNotFoundException(String.format("Author with id: %d not found", id)));
+				.orElseThrow(() -> new DataNotFoundException(
+						String.format("Author with id: %d not found", id)));
 		return authorMapper.toDto(author);
 	}
 

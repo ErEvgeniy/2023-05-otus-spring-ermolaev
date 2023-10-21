@@ -31,7 +31,8 @@ public class BookServiceImpl implements BookService {
 	@Transactional(readOnly = true)
 	public BookDto findBookById(long id) {
 		Book book = bookRepository.findById(id)
-				.orElseThrow(() -> new DataNotFoundException(String.format("Book with id: %d not found", id)));
+				.orElseThrow(() -> new DataNotFoundException(
+						String.format("Book with id: %d not found", id)));
 		return bookMapper.toDto(book);
 	}
 

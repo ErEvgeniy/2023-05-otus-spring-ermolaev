@@ -24,7 +24,8 @@ public class GenreServiceImpl implements GenreService {
 	@Transactional(readOnly = true)
 	public GenreDto findGenreById(long id) {
 		Genre genre = genreRepository.findById(id)
-				.orElseThrow(() -> new DataNotFoundException(String.format("Genre with id: %d not found", id)));
+				.orElseThrow(() -> new DataNotFoundException(
+						String.format("Genre with id: %d not found", id)));
 		return genreMapper.toDto(genre);
 	}
 

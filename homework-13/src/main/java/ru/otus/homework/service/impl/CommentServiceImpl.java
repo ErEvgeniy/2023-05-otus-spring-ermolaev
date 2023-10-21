@@ -29,7 +29,8 @@ public class CommentServiceImpl implements CommentService {
 	@Transactional(readOnly = true)
 	public CommentDto findCommentById(long id) {
 		Comment comment = commentRepository.findById(id)
-				.orElseThrow(() -> new DataNotFoundException(String.format("Comment with id: %d not found", id)));
+				.orElseThrow(() -> new DataNotFoundException(
+						String.format("Comment with id: %d not found", id)));
 		return commentMapper.toDto(comment);
 	}
 

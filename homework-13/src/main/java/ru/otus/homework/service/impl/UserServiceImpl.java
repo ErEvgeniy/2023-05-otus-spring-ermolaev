@@ -26,7 +26,8 @@ public class UserServiceImpl implements UserDetailsService {
         }
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with username: %s not found", username)));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with username: %s not found", username)));
 
         List<SimpleGrantedAuthority> authorities = user.getRoles()
                 .stream()
