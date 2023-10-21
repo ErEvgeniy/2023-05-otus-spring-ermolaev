@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 1000px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+
+        .control {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function deleteBook(id) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/book/' + id;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+<h3>Books:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th colspan="3">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.id}">1</td>
+        <td th:text="${book.name}">Onegin</td>
+        <td th:text="${book.author.getFullName()}">Pushkin</td>
+        <td th:text="${book.genre.name}">Novel</td>
+        <td>
+            <a href="edit.html" th:href="@{/book(id=${book.id})}">Edit</a>
+        </td>
+        <td>
+            <a href="javascript:void(0);" th:onclick="'deleteBook(' + ${book.id} + ')'">Delete</a>
+        </td>
+        <td>
+            <a href="../comment/list.html" th:href="@{/comment/list/__${book.id}__}">Comments</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="control">
+    <a href="../../static/index.html" th:href="@{/book/create}"><button type="button">Create</button></a>
+    <a href="../../static/index.html" th:href="@{/}"><button type="button">Cancel</button></a>
+</div>
+</body>
+</html>
