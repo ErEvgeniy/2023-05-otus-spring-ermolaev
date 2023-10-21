@@ -11,7 +11,6 @@ import ru.otus.homework.exception.DataNotFoundException;
 import ru.otus.homework.service.GenreService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +23,10 @@ public class GenreServiceImpl implements GenreService {
 	@Override
 	@Transactional(readOnly = true)
 	public GenreDto findGenreById(long id) {
-		Optional<Genre> genreOptional = genreRepository.findById(id);
-		if (genreOptional.isEmpty()) {
-			throw new DataNotFoundException(String.format("Genre with id: %d not found", id));
-		}
-		return genreMapper.toDto(genreOptional.get());
+		Genre genre = genreRepository.findById(id)
+				.orElseThrow(() -> new DataNotFoundException(
+						String.format("Genre with id: %d not found", id)));
+		return genreMapper.toDto(genre);
 	}
 
 	@Override
