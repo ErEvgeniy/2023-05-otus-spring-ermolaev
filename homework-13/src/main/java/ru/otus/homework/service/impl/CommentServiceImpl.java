@@ -28,11 +28,9 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	@Transactional(readOnly = true)
 	public CommentDto findCommentById(long id) {
-		Optional<Comment> commentOptional = commentRepository.findById(id);
-		if (commentOptional.isEmpty()) {
-			throw new DataNotFoundException(String.format("Comment with id: %d not found", id));
-		}
-		return commentMapper.toDto(commentOptional.get());
+		Comment comment = commentRepository.findById(id)
+				.orElseThrow(() -> new DataNotFoundException(String.format("Comment with id: %d not found", id)));
+		return commentMapper.toDto(comment);
 	}
 
 	@Override

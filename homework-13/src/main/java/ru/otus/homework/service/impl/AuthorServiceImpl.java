@@ -11,7 +11,6 @@ import ru.otus.homework.exception.DataNotFoundException;
 import ru.otus.homework.service.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +23,9 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	@Transactional(readOnly = true)
 	public AuthorDto findAuthorById(long id) {
-		Optional<Author> authorOptional = authorRepository.findById(id);
-		if (authorOptional.isEmpty()) {
-			throw new DataNotFoundException(String.format("Author with id: %d not found", id));
-		}
-		return authorMapper.toDto(authorOptional.get());
+		Author author = authorRepository.findById(id)
+				.orElseThrow(() -> new DataNotFoundException(String.format("Author with id: %d not found", id)));
+		return authorMapper.toDto(author);
 	}
 
 	@Override
