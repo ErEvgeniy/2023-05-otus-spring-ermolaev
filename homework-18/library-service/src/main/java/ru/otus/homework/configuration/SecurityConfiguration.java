@@ -14,25 +14,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests((authorize) -> authorize
-//                        .requestMatchers("/login").permitAll()
-//                        .requestMatchers(HttpMethod.GET).hasAnyRole("ADMINISTRATOR", "GUEST")
-//                        .requestMatchers(HttpMethod.POST).hasRole("ADMINISTRATOR")
-//                        .requestMatchers(HttpMethod.PATCH).hasRole("ADMINISTRATOR")
-//                        .requestMatchers(HttpMethod.PUT).hasRole("ADMINISTRATOR")
-//                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMINISTRATOR")
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(httpSecurityFormLoginConfigurer -> {
-//                    httpSecurityFormLoginConfigurer.usernameParameter("u_name");
-//                    httpSecurityFormLoginConfigurer.passwordParameter("p_word");
-//                });
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers(HttpMethod.GET).hasAnyRole("ADMINISTRATOR", "GUEST")
+                        .requestMatchers(HttpMethod.POST).hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.PATCH).hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.PUT).hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMINISTRATOR")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(httpSecurityFormLoginConfigurer -> {
+                    httpSecurityFormLoginConfigurer.usernameParameter("u_name");
+                    httpSecurityFormLoginConfigurer.passwordParameter("p_word");
+                });
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

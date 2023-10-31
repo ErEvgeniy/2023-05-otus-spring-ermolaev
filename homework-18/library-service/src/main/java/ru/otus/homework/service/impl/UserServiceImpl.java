@@ -13,7 +13,6 @@ import ru.otus.homework.domain.User;
 import ru.otus.homework.repository.UserRepository;
 
 import java.util.List;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,10 @@ public class UserServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     @HystrixCommand(commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000"),
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000"),
             @HystrixProperty(name = "execution.isolation.semaphore.maxConcurrentRequests", value = "10")
     })
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        sleepRandomly();
-
-
         if (username == null || username.isEmpty()) {
             throw new UsernameNotFoundException("Username not present");
         }
@@ -51,18 +47,4 @@ public class UserServiceImpl implements UserDetailsService {
         );
     }
 
-    private void sleepRandomly() {
-        Random rand = new Random();
-        int randomNum = rand.nextInt(3) + 1;
-        if(randomNum == 3) {
-            System.out.println("It is a chance for demonstrating Hystrix action");
-            try {
-                System.out.println("Start sleeping...." + System.currentTimeMillis());
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                System.out.println("Hystrix thread interupted...." + System.currentTimeMillis());
-                e.printStackTrace();
-            }
-        }
-    }
 }

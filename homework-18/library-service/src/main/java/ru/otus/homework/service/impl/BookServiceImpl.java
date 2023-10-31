@@ -17,7 +17,7 @@ import ru.otus.homework.service.BookService;
 
 import java.util.List;
 
-import static com.netflix.hystrix.contrib.javanica.conf.HystrixPropertiesManager.*;
+import static com.netflix.hystrix.contrib.javanica.conf.HystrixPropertiesManager.EXECUTION_ISOLATION_THREAD_TIMEOUT_IN_MILLISECONDS;
 
 @Service
 @RequiredArgsConstructor
